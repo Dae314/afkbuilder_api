@@ -1,18 +1,14 @@
 services:
   - type: web
-    name: strapi
+    name: afkbuilder_strapi
     env: node
     plan: starter
     buildCommand: yarn install && yarn build
     startCommand: yarn start
     healthCheckPath: /_health
-    disk:
-      name: strapi-uploads
-      mountPath: /opt/render/project/src/public/uploads
-      sizeGB: 1
     envVars:
       - key: NODE_VERSION
-        value: 12.18.4
+        value: 14.17.3
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
@@ -25,5 +21,5 @@ services:
         generateValue: true
 
 databases:
-  - name: strapi
+  - name: afkbuilder_db
     plan: starter
