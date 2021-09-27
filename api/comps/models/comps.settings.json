@@ -2,7 +2,8 @@
   "kind": "collectionType",
   "collectionName": "comps",
   "info": {
-    "name": "comps"
+    "name": "comps",
+    "description": ""
   },
   "options": {
     "increments": true,
@@ -36,6 +37,11 @@
     },
     "comp_string": {
       "type": "text"
+    },
+    "afkbuilder_user": {
+      "plugin": "users-permissions",
+      "model": "user",
+      "via": "comps"
     }
   }
 }
