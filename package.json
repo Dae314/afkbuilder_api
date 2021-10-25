@@ -11,11 +11,11 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "jquery": "^1.9.1",
-    "knex": "^0.21.18",
-    "pg": "^8.3.3",
-    "pg-connection-string": "^2.4.0",
-    "sqlite3": "latest",
+    "jquery": "^1.12.4",
+    "knex": "^0.21.21",
+    "pg": "^8.7.1",
+    "pg-connection-string": "^2.5.0",
+    "sqlite3": "^5.0.2",
     "strapi": "^3.6.8",
     "strapi-admin": "^3.6.8",
     "strapi-connector-bookshelf": "^3.6.8",
@@ -25,7 +25,8 @@
     "strapi-plugin-graphql": "^3.6.8",
     "strapi-plugin-upload": "^3.6.8",
     "strapi-plugin-users-permissions": "^3.6.8",
-    "strapi-utils": "^3.6.8"
+    "strapi-utils": "^3.6.8",
+    "ua-parser-js": "^0.7.30"
   },
   "author": {
     "name": "Dae314"
