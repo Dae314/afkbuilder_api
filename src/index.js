@@ -9,6 +9,7 @@ module.exports = {
    *
    * This gives you an opportunity to extend code.
    */
+  // register(/*{ strapi }*/) {},
   register({ strapi }) {
     strapi.server.use(session({
       secret: "grant",
