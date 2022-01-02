@@ -1,5 +1,7 @@
 'use strict';
 
+const session = require("koa-session2");
+
 module.exports = {
   /**
    * An asynchronous register function that runs before
@@ -7,7 +9,11 @@ module.exports = {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/*{ strapi }*/) {},
+  register({ strapi }) {
+    strapi.server.use(session({
+      secret: "grant",
+    }));
+  },
 
   /**
    * An asynchronous bootstrap function that runs before
