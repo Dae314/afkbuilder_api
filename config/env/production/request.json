@@ -1,0 +1,7 @@
+{
+  "logger": {
+    "level": "error",
+    "exposeInContext": true,
+    "requests": true
+  }
+}
