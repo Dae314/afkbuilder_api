@@ -68,6 +68,12 @@
       "relation": "oneToMany",
       "target": "api::comp.comp",
       "mappedBy": "author"
+    },
+    "upvoted_comps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::comp.comp",
+      "inversedBy": "upvoters"
     }
   }
 }
