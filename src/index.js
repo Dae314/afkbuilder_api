@@ -1,6 +1,7 @@
 'use strict';
 
 const session = require("koa-session2"); // required import for oauth
+const logger = require('./utilities/logger');
 
 // resolver imports
 const { coreCreateMutationResolve, coreUpdateMutationResolve, coreDeleteMutationResolve } = require("./utilities/core-resolvers.js");
@@ -15,6 +16,7 @@ module.exports = {
    */
   // register(/*{ strapi }*/) {},
   register({ strapi }) {
+    // required snippet for oauth
     strapi.server.use(session({
       secret: "grant",
     }));
@@ -36,9 +38,10 @@ module.exports = {
                   args,
                   context
                 );
+                logger.debug(`GQL Comp create called with args: ${JSON.stringify(args)}`);
                 return resolver
               } catch(err) {
-                console.log(err);
+                logger.error(`An error occurred on GQL Comp creation: ${JSON.stringify(err)}`);
               }
             },
           },
@@ -53,14 +56,22 @@ module.exports = {
               });
 
               if (!comp) {
+                logger.error(`A forbidden error occurred on GQL Comp update: ${JSON.stringify(args)}`);
                 return new ForbiddenError(`You are not authorized to update this entry.`);
               }
-              return await coreUpdateMutationResolve(
-                "api::comp.comp",
-                parent,
-                args,
-                context
-              );
+
+              try {
+                const resolver = await coreUpdateMutationResolve(
+                  "api::comp.comp",
+                  parent,
+                  args,
+                  context
+                );
+                logger.debug(`GQL Comp update called with args: ${JSON.stringify(args)}`);
+                return resolver;
+              } catch(err) {
+                logger.error(`An error occurred on GQL Comp update: ${JSON.stringify(err)}`);
+              }
             },
           },
           deleteComp: {
@@ -74,13 +85,21 @@ module.exports = {
               });
 
               if (!comp) {
+                logger.error(`A forbidden error occurred on GQL Comp delete: ${JSON.stringify(args)}`);
                 return new ForbiddenError(`You are not authorized to delete this entry.`);
               }
-              return await coreDeleteMutationResolve(
-                "api::comp.comp",
-                parent,
-                args
-              );
+
+              try {
+                const resolver = await coreDeleteMutationResolve(
+                  "api::comp.comp",
+                  parent,
+                  args
+                );
+                logger.debug(`GQL Comp delete called with args: ${JSON.stringify(args)}`);
+                return resolver;
+              } catch(err) {
+                logger.error(`An error occurred on GQL Comp delete: ${JSON.stringify(err)}`);
+              }
             },
           },
         },
