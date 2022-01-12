@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: strapi
+    env: node
+    plan: starter
+    buildCommand: yarn install && yarn build
+    startCommand: yarn start
+    healthCheckPath: /_health
+    disk:
+      name: strapi-uploads
+      mountPath: /opt/render/project/src/public/uploads
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 16.13.1
+      - key: NODE_ENV
+        value: production
+      - key: BUILD_TYPE
+        value: production
+      - key: PORT
+        value: 16011
+      - key: DATABASE_URL
+        fromDatabase:
+          name: afkbuilder_strapi
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_JWT_SECRET
+        generateValue: true
+      - key: API_TOKEN_SALT
+        generateValue: true
+      - key: URL
+        value: http://api.afkbuilder.com:16011
+
+databases:
+  - name: afkbuilder_strapi
+    plan: starter
