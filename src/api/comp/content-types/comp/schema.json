@@ -32,7 +32,7 @@
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
       "private": true,
-      "inversedBy": "upvoted_comps"
+      "mappedBy": "upvoted_comps"
     }
   }
 }

@@ -4,17 +4,17 @@ module.exports = {
   routes: [
     {
       method: 'GET',
-      path: '/comps/hasupvoted/:id',
+      path: '/custom-comps/hasupvoted/:id',
       handler: 'comp.hasUpvoted',
     },
     {
       method: 'GET',
-      path: '/comps/getupvotes/:id',
+      path: '/custom-comps/getupvotes/:id',
       handler: 'comp.getUpvotes',
     },
     {
       method: 'PUT',
-      path: '/comps/toggleupvote/:id',
+      path: '/custom-comps/toggleupvote/:id',
       handler: 'comp.toggleUpvote',
     },
   ]

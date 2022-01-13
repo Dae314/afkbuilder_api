@@ -74,6 +74,9 @@
       "relation": "manyToMany",
       "target": "api::comp.comp",
       "inversedBy": "upvoters"
+    },
+    "my_heroes": {
+      "type": "text"
     }
   }
 }
