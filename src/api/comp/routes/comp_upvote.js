@@ -1,3 +1,5 @@
+// ./src/api/comp/routes/comp_upvote.js
+
 module.exports = {
   routes: [
     {
