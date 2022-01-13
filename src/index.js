@@ -104,6 +104,15 @@ module.exports = {
           },
         },
       },
+      resolversConfig: {
+        'Mutation.updateUsersPermissionsUser': {
+          policies: [
+            (policyContext, config, { strapi }) => {
+              return parseInt(policyContext.state.user.id) === parseInt(policyContext.args.id);
+            }
+          ],
+        },
+      },
     });
   },
 
