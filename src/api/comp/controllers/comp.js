@@ -77,6 +77,17 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       logger.error(`An error occured on REST Comp delete: ${JSON.stringify(err)}`);
     }
   },
+  async getAuthoredComps(ctx) {
+    try {
+      const comps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['uuid'],
+        filters: { author: { id: ctx.state.user.id } },
+      });
+      return { data: {comps: comps} };
+    } catch (err) {
+      logger.error(`An error occurred looking up comps for getAuthoredComps: ${JSON.stringify(err)}`);
+    }
+  },
   async hasUpvoted(ctx) {
     try {
       const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
