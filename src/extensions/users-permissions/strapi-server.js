@@ -1,4 +1,5 @@
 module.exports = (plugin) => {
+  // controller and route for tokenDecrypt
   plugin.controllers.auth['tokenDecrypt'] = async (ctx) => {
     // get token from the POST request
     const {token} = ctx.request.body;
@@ -18,8 +19,7 @@ module.exports = (plugin) => {
       // if the token is not a valid token it will throw and error
       return ctx.badRequest(err.toString());
     }
-  }
-
+  };
   plugin.routes['content-api'].routes.push({
     method: 'POST',
     path: '/token/validation',
@@ -29,6 +29,21 @@ module.exports = (plugin) => {
       prefix: '',
     },
   });
+
+  // modify the user update route to only allow users to update their own profile
+  plugin.policies['userUpdate'] = (policyContext, config, { strapi }) => {
+    return parseInt(policyContext.state.user.id) === parseInt(policyContext.params.id);
+  };
+  const userUpdateIdx = plugin.routes['content-api'].routes.findIndex(e => e.method === 'PUT' && e.handler === 'user.update');
+  plugin.routes['content-api'].routes[userUpdateIdx] = {
+    method: 'PUT',
+    path: '/users/:id',
+    handler: 'user.update',
+    config: {
+      prefix: '',
+      policies: ['userUpdate'],
+    }
+  };
 
   return plugin;
 };
