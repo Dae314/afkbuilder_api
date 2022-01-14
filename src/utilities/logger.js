@@ -1,12 +1,29 @@
 // ./src/utilities/logger.js
-const simpleLogger = require('simple-node-logger');
+const winston = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
 
-const logger = simpleLogger.createRollingFileLogger({
-  logDirectory: 'logs/',
-  fileNamePattern: 'strapi_log_<DATE>.log',
-  dateFormat: 'YYYY.MM.DD',
+const logFormat = winston.format.combine(
+  winston.format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
+  winston.format.align(),
+  winston.format.printf(
+    info => `${info.timestamp} ${info.level}: ${info.message}`,
+  ),
+);
+
+const transport = new DailyRotateFile({
+  filename: './logs/strapi_log_%DATE%.log',
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxFiles: '7d',
+  level: process.env.BUILD_TYPE === 'development' ? 'debug' : 'info',
 });
 
-if(process.env.BUILD_TYPE === 'development') logger.setLevel('debug');
+const logger = winston.createLogger({
+  format: logFormat,
+  transports: [
+    transport,
+    new winston.transports.Console({level: 'info',}),
+  ]
+});
 
 module.exports = logger;

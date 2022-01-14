@@ -17,8 +17,9 @@
     "@strapi/strapi": "4.0.2",
     "koa-session2": "^2.2.10",
     "pg": "^8.7.1",
-    "simple-node-logger": "^21.8.12",
-    "sqlite3": "5.0.2"
+    "sqlite3": "5.0.2",
+    "winston": "^3.4.0",
+    "winston-daily-rotate-file": "^4.5.5"
   },
   "author": {
     "name": "Dae314"
