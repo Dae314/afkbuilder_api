@@ -23,7 +23,7 @@ module.exports = {
 
     const extensionService = strapi.plugin("graphql").service("extension");
 
-    extensionService.use({
+    extensionService.use(({ nexus }) => ({
       resolvers: {
         Mutation: {
           createComp: {
@@ -113,7 +113,7 @@ module.exports = {
           ],
         },
       },
-    });
+    }));
   },
 
   /**

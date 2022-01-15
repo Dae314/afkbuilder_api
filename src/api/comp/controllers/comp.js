@@ -7,6 +7,16 @@
 const { createCoreController } = require('@strapi/strapi').factories;
 const logger = require('../../../utilities/logger');
 
+function selectProps(...props) {
+  return function(obj){
+    const newObj = {};
+    props.forEach(name => {
+      newObj[name] = obj[name];
+    });
+    return newObj;
+  }
+}
+
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async create(ctx) {
     let entity;
@@ -97,6 +107,17 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return { data: {upvoted: result} };
     } catch (err) {
       logger.error(`An error occurred looking up comp for hasUpvoted: ${JSON.stringify(err)}`);
+    }
+  },
+  async getAllUpvoted(ctx) {
+    try {
+      const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
+        populate: 'upvoted_comps',
+      });
+      const result = user.upvoted_comps.map(selectProps('id', 'uuid'));
+      return { data: { comps: result} };
+    } catch (err) {
+      logger.error(`An error occurred looking up user for getAllUpvoted: ${JSON.stringify(err)}`);
     }
   },
   async getUpvotes(ctx) {

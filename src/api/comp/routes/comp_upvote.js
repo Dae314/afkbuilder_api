@@ -4,6 +4,11 @@ module.exports = {
   routes: [
     {
       method: 'GET',
+      path: '/custom-comps/getallupvoted',
+      handler: 'comp.getAllUpvoted',
+    },
+    {
+      method: 'GET',
       path: '/custom-comps/hasupvoted/:id',
       handler: 'comp.hasUpvoted',
     },
