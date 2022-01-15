@@ -24,6 +24,16 @@ module.exports = {
     const extensionService = strapi.plugin("graphql").service("extension");
 
     extensionService.use(({ nexus }) => ({
+      types: [
+        nexus.extendType({
+          type: 'UsersPermissionsMe',
+          definition(t) {
+            // expose custom user fields
+            t.string('my_heroes');
+            t.string('local_comps');
+          },
+        }),
+      ],
       resolvers: {
         Mutation: {
           createComp: {
