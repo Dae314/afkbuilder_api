@@ -79,7 +79,7 @@
       "type": "text"
     },
     "local_comps": {
-      "type": "text"
+      "type": "json"
     }
   }
 }

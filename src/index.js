@@ -38,9 +38,76 @@ module.exports = {
         Mutation: {
           createComp: {
             resolve: async (parent, args, context) => {
+              // add author field
               const user = context.state.user;
               const author = user.id;
               args.data.author = author;
+
+              // parse tags field
+              let tagList = [];
+              const inputTags = args.data.tags.map(e => e.trim());
+              const uniqueTags = [...new Set(inputTags)];
+              for(let tag of uniqueTags) {
+                if(tag) {
+                  let [existingTag] = await strapi.entityService.findMany('api::tag.tag', {
+                    fields: ['id'],
+                    filters: {
+                      name: tag,
+                    },
+                  });
+                  if (!existingTag) {
+                    // tag does not exist yet, add a new tag
+                    try {
+                      const newTag = await strapi.entityService.create('api::tag.tag', {
+                        data: {
+                          name: tag,
+                        },
+                      });
+                      tagList.push(newTag.id);
+                    } catch(err) {
+                      logger.error(`An error occurred on GQL comp creation while adding a new tag: ${JSON.stringify(err)}`);
+                    }
+                  } else {
+                    // tag already exists, add its ID to the tagList
+                    tagList.push(existingTag.id);
+                  }
+                }
+              }
+              args.data.tags = tagList;
+
+              // parse heroes field
+              let heroList = [];
+              const inputHeroes = args.data.heroes.map(e => e.trim());
+              const uniqueHeroes = [...new Set(inputHeroes)];
+              for(let hero of uniqueHeroes) {
+                if(hero) {
+                  let [existingHero] = await strapi.entityService.findMany('api::hero.hero', {
+                    fields: ['id'],
+                    filters: {
+                      name: hero,
+                    },
+                  });
+                  if (!existingHero) {
+                    // hero does not exist yet, add a new hero
+                    try {
+                      const newHero = await strapi.entityService.create('api::hero.hero', {
+                        data: {
+                          name: hero,
+                        },
+                      });
+                      heroList.push(newHero.id);
+                    } catch(err) {
+                      logger.error(`An error occurred on GQL comp creation while adding a new hero: ${JSON.stringify(err)}`);
+                    }
+                  } else {
+                    // hero already exists, add its ID to the heroList
+                    heroList.push(existingHero.id);
+                  }
+                }
+              }
+              args.data.heroes = heroList;
+
+              // try to create the comp
               try {
                 const resolver = await coreCreateMutationResolve(
                   "api::comp.comp",
@@ -57,19 +124,92 @@ module.exports = {
           },
           updateComp: {
             resolve: async (parent, args, context) => {
-              const [comp] = await strapi.entityService.findMany('api::comp.comp', {
-                fields: ['name'],
-                filters: {
-                  id: args.id,
-                  author: context.state.user.id,
-                },
-              });
-
-              if (!comp) {
-                logger.error(`A forbidden error occurred on GQL Comp update: ${JSON.stringify(args)}`);
-                return new ForbiddenError(`You are not authorized to update this entry.`);
+              // check that the user is authorized to update the comp
+              try {
+                const [comp] = await strapi.entityService.findMany('api::comp.comp', {
+                  fields: ['name'],
+                  filters: {
+                    id: args.id,
+                    author: context.state.user.id,
+                  },
+                });
+                if (!comp) {
+                  logger.error(`A forbidden error occurred on GQL Comp update: ${JSON.stringify(args)}`);
+                  return new ForbiddenError(`You are not authorized to update this entry.`);
+                }
+              } catch(err) {
+                logger.error(`An error occured finding comp on GQL Comp update: ${JSON.stringify(err)}`);
               }
 
+              // parse tags field if necessary
+              if(args.data.tags) {
+                let tagList = [];
+                const inputTags = args.data.tags.map(e => e.trim());
+                const uniqueTags = [...new Set(inputTags)];
+                for(let tag of uniqueTags) {
+                  if(tag) {
+                    let [existingTag] = await strapi.entityService.findMany('api::tag.tag', {
+                      fields: ['id'],
+                      filters: {
+                        name: tag,
+                      },
+                    });
+                    if (!existingTag) {
+                      // tag does not exist yet, add a new tag
+                      try {
+                        const newTag = await strapi.entityService.create('api::tag.tag', {
+                          data: {
+                            name: tag,
+                          },
+                        });
+                        tagList.push(newTag.id);
+                      } catch(err) {
+                        logger.error(`An error occurred on GQL comp update while adding a new tag: ${JSON.stringify(err)}`);
+                      }
+                    } else {
+                      // tag already exists, add its ID to the tagList
+                      tagList.push(existingTag.id);
+                    }
+                  }
+                }
+                args.data.tags = tagList;
+              }
+
+              // parse heroes field if necessary
+              if(args.data.heroes) {
+                let heroList = [];
+                const inputHeroes = args.data.heroes.map(e => e.trim());
+                const uniqueHeroes = [...new Set(inputHeroes)];
+                for(let hero of uniqueHeroes) {
+                  if(hero) {
+                    let [existingHero] = await strapi.entityService.findMany('api::hero.hero', {
+                      fields: ['id'],
+                      filters: {
+                        name: hero,
+                      },
+                    });
+                    if (!existingHero) {
+                      // hero does not exist yet, add a new hero
+                      try {
+                        const newHero = await strapi.entityService.create('api::hero.hero', {
+                          data: {
+                            name: hero,
+                          },
+                        });
+                        heroList.push(newHero.id);
+                      } catch(err) {
+                        logger.error(`An error occurred on GQL comp update while adding a new hero: ${JSON.stringify(err)}`);
+                      }
+                    } else {
+                      // hero already exists, add its ID to the heroList
+                      heroList.push(existingHero.id);
+                    }
+                  }
+                }
+                args.data.heroes = heroList;
+              }
+
+              // try to update the comp
               try {
                 const resolver = await coreUpdateMutationResolve(
                   "api::comp.comp",
@@ -86,17 +226,21 @@ module.exports = {
           },
           deleteComp: {
             resolve: async (parent, args, context) => {
-              const [comp] = await strapi.entityService.findMany('api::comp.comp', {
-                fields: ['name'],
-                filters: {
-                  id: args.id,
-                  author: context.state.user.id,
-                },
-              });
-
-              if (!comp) {
-                logger.error(`A forbidden error occurred on GQL Comp delete: ${JSON.stringify(args)}`);
-                return new ForbiddenError(`You are not authorized to delete this entry.`);
+              // check that the user is authorized to delete the comp
+              try {
+                const [comp] = await strapi.entityService.findMany('api::comp.comp', {
+                  fields: ['name'],
+                  filters: {
+                    id: args.id,
+                    author: context.state.user.id,
+                  },
+                });
+                if (!comp) {
+                  logger.error(`A forbidden error occurred on GQL Comp delete: ${JSON.stringify(args)}`);
+                  return new ForbiddenError(`You are not authorized to delete this entry.`);
+                }
+              } catch(err) {
+                logger.error(`An error occured finding comp on GQL Comp delete: ${JSON.stringify(err)}`);
               }
 
               try {

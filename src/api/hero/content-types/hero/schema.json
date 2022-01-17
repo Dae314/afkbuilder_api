@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "heroes",
+  "info": {
+    "singularName": "hero",
+    "pluralName": "heroes",
+    "displayName": "heroes"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "uid",
+      "required": true
+    },
+    "comps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::comp.comp",
+      "mappedBy": "heroes"
+    }
+  }
+}

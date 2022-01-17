@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tags",
+  "info": {
+    "singularName": "tag",
+    "pluralName": "tags",
+    "displayName": "tags"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "uid",
+      "required": true,
+      "maxLength": 20
+    },
+    "comps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::comp.comp",
+      "mappedBy": "tags"
+    }
+  }
+}

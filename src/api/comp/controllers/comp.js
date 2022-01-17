@@ -19,12 +19,78 @@ function selectProps(...props) {
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async create(ctx) {
-    let entity;
+    // add author field
     const user = ctx.state.user;
     const author = user.id;
     ctx.request.body.data.author = author;
+
+    // parse tags field
+    let tagList = [];
+    const inputTags = ctx.request.body.data.tags.map(e => e.trim());
+    const uniqueTags = [...new Set(inputTags)];
+    for(let tag of uniqueTags) {
+      if(tag) {
+        let [existingTag] = await strapi.entityService.findMany('api::tag.tag', {
+          fields: ['id'],
+          filters: {
+            name: tag,
+          },
+        });
+        if (!existingTag) {
+          // tag does not exist yet, add a new tag
+          try {
+            const newTag = await strapi.entityService.create('api::tag.tag', {
+              data: {
+                name: tag,
+              },
+            });
+            tagList.push(newTag.id);
+          } catch(err) {
+            logger.error(`An error occurred on REST comp creation while adding a new tag: ${JSON.stringify(err)}`);
+          }
+        } else {
+          // tag already exists, add its ID to the tagList
+          tagList.push(existingTag.id);
+        }
+      }
+    }
+    ctx.request.body.data.tags = tagList;
+
+    // parse heroes field
+    let heroList = [];
+    const inputHeroes = ctx.request.body.data.heroes.map(e => e.trim());
+    const uniqueHeroes = [...new Set(inputHeroes)];
+    for(let hero of uniqueHeroes) {
+      if(hero) {
+        let [existingHero] = await strapi.entityService.findMany('api::hero.hero', {
+          fields: ['id'],
+          filters: {
+            name: hero,
+          },
+        });
+        if (!existingHero) {
+          // hero does not exist yet, add a new hero
+          try {
+            const newHero = await strapi.entityService.create('api::hero.hero', {
+              data: {
+                name: hero,
+              },
+            });
+            heroList.push(newHero.id);
+          } catch(err) {
+            logger.error(`An error occurred on REST comp creation while adding a new hero: ${JSON.stringify(err)}`);
+          }
+        } else {
+          // hero already exists, add its ID to the heroList
+          heroList.push(existingHero.id);
+        }
+      }
+    }
+    ctx.request.body.data.heroes = heroList;
+
+    // try to create the comp
     try {
-      entity = await strapi.entityService.create('api::comp.comp', ctx.request.body);
+      const entity = await strapi.entityService.create('api::comp.comp', ctx.request.body);
       logger.debug(`REST Comp create called with args: ${JSON.stringify(ctx.request.body)}`);
       return entity;
     } catch(err) {
@@ -32,6 +98,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     }
   },
   async update(ctx) {
+    // check that the user is authorized to update the comp
     try {
       const [comp] = await strapi.entityService.findMany('api::comp.comp', {
         fields: ['name'],
@@ -50,6 +117,75 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       logger.error(`An error occured finding comp on REST Comp update: ${JSON.stringify(err)}`);
     }
 
+    // parse tags field if necessary
+    if(ctx.request.body.data.tags) {
+      let tagList = [];
+      const inputTags = ctx.request.body.data.tags.map(e => e.trim());
+      const uniqueTags = [...new Set(inputTags)];
+      for(let tag of uniqueTags) {
+        if(tag) {
+          let [existingTag] = await strapi.entityService.findMany('api::tag.tag', {
+            fields: ['id'],
+            filters: {
+              name: tag,
+            },
+          });
+          if (!existingTag) {
+            // tag does not exist yet, add a new tag
+            try {
+              const newTag = await strapi.entityService.create('api::tag.tag', {
+                data: {
+                  name: tag,
+                },
+              });
+              tagList.push(newTag.id);
+            } catch(err) {
+              logger.error(`An error occurred on REST comp update while adding a new tag: ${JSON.stringify(err)}`);
+            }
+          } else {
+            // tag already exists, add its ID to the tagList
+            tagList.push(existingTag.id);
+          }
+        }
+      }
+      ctx.request.body.data.tags = tagList;
+    }
+
+    // parse heroes field if necessary
+    if(ctx.request.body.data.heroes) {
+      let heroList = [];
+      const inputHeroes = ctx.request.body.data.heroes.map(e => e.trim());
+      const uniqueHeroes = [...new Set(inputHeroes)];
+      for(let hero of uniqueHeroes) {
+        if(hero) {
+          let [existingHero] = await strapi.entityService.findMany('api::hero.hero', {
+            fields: ['id'],
+            filters: {
+              name: hero,
+            },
+          });
+          if (!existingHero) {
+            // hero does not exist yet, add a new hero
+            try {
+              const newHero = await strapi.entityService.create('api::hero.hero', {
+                data: {
+                  name: hero,
+                },
+              });
+              heroList.push(newHero.id);
+            } catch(err) {
+              logger.error(`An error occurred on REST comp update while adding a new hero: ${JSON.stringify(err)}`);
+            }
+          } else {
+            // hero already exists, add its ID to the heroList
+            heroList.push(existingHero.id);
+          }
+        }
+      }
+      ctx.request.body.data.heroes = heroList;
+    }
+
+    // try to update the comp
     try {
       const response = await super.update(ctx);
       const sanitized_ctx = {method: ctx.request.method, url: ctx.request.url, body: ctx.request.body};
@@ -60,6 +196,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     }
   },
   async delete(ctx) {
+    // check that the user is authorized to delete the comp
     try {
       const [comp] = await strapi.entityService.findMany('api::comp.comp', {
         fields: ['name'],

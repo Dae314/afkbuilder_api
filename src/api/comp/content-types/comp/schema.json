@@ -13,13 +13,12 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
-    },
-    "uuid": {
-      "type": "string"
+      "type": "string",
+      "maxLength": 50
     },
     "comp_string": {
-      "type": "text"
+      "type": "text",
+      "required": true
     },
     "author": {
       "type": "relation",
@@ -33,6 +32,22 @@
       "target": "plugin::users-permissions.user",
       "private": true,
       "mappedBy": "upvoted_comps"
+    },
+    "uuid": {
+      "type": "uid",
+      "required": true
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "comps"
+    },
+    "heroes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::hero.hero",
+      "inversedBy": "comps"
     }
   }
 }
