@@ -5,7 +5,7 @@ const logger = require('./utilities/logger');
 
 // resolver imports
 const { coreCreateMutationResolve, coreUpdateMutationResolve, coreDeleteMutationResolve } = require("./utilities/core-resolvers.js");
-const { ForbiddenError } = require('@strapi/utils').errors;
+const { ForbiddenError, ApplicationError } = require('@strapi/utils').errors;
 
 module.exports = {
   /**
@@ -66,6 +66,7 @@ module.exports = {
                       tagList.push(newTag.id);
                     } catch(err) {
                       logger.error(`An error occurred on GQL comp creation while adding a new tag: ${JSON.stringify(err)}`);
+                      return new ApplicationError(`An error occurred on GQL comp creation while adding a new tag.`);
                     }
                   } else {
                     // tag already exists, add its ID to the tagList
@@ -98,6 +99,7 @@ module.exports = {
                       heroList.push(newHero.id);
                     } catch(err) {
                       logger.error(`An error occurred on GQL comp creation while adding a new hero: ${JSON.stringify(err)}`);
+                      return new ApplicationError(`An error occurred on GQL comp creation while adding a new hero.`);
                     }
                   } else {
                     // hero already exists, add its ID to the heroList
@@ -119,6 +121,7 @@ module.exports = {
                 return resolver
               } catch(err) {
                 logger.error(`An error occurred on GQL Comp creation: ${JSON.stringify(err)}`);
+                return new ApplicationError(`An error occurred on GQL Comp creation.`);
               }
             },
           },
@@ -138,7 +141,8 @@ module.exports = {
                   return new ForbiddenError(`You are not authorized to update this entry.`);
                 }
               } catch(err) {
-                logger.error(`An error occured finding comp on GQL Comp update: ${JSON.stringify(err)}`);
+                logger.error(`An error occured on GQL Comp update while finding comp: ${JSON.stringify(err)}`);
+                return new ApplicationError(`An error occured GQL Comp update while finding comp.`);
               }
 
               // parse tags field if necessary
@@ -165,6 +169,7 @@ module.exports = {
                         tagList.push(newTag.id);
                       } catch(err) {
                         logger.error(`An error occurred on GQL comp update while adding a new tag: ${JSON.stringify(err)}`);
+                        return new ApplicationError(`An error occurred on GQL comp update while adding a new tag.`);
                       }
                     } else {
                       // tag already exists, add its ID to the tagList
@@ -199,6 +204,7 @@ module.exports = {
                         heroList.push(newHero.id);
                       } catch(err) {
                         logger.error(`An error occurred on GQL comp update while adding a new hero: ${JSON.stringify(err)}`);
+                        return new ApplicationError(`An error occurred on GQL comp update while adding a new hero.`);
                       }
                     } else {
                       // hero already exists, add its ID to the heroList
@@ -221,6 +227,7 @@ module.exports = {
                 return resolver;
               } catch(err) {
                 logger.error(`An error occurred on GQL Comp update: ${JSON.stringify(err)}`);
+                return new ApplicationError(`An error occurred on GQL Comp update.`);
               }
             },
           },
@@ -240,9 +247,11 @@ module.exports = {
                   return new ForbiddenError(`You are not authorized to delete this entry.`);
                 }
               } catch(err) {
-                logger.error(`An error occured finding comp on GQL Comp delete: ${JSON.stringify(err)}`);
+                logger.error(`An error occured on GQL Comp delete while finding comp: ${JSON.stringify(err)}`);
+                return new ApplicationError(`An error occured on GQL Comp delete while finding comp.`);
               }
 
+              // try to delete the comp
               try {
                 const resolver = await coreDeleteMutationResolve(
                   "api::comp.comp",
@@ -253,6 +262,7 @@ module.exports = {
                 return resolver;
               } catch(err) {
                 logger.error(`An error occurred on GQL Comp delete: ${JSON.stringify(err)}`);
+                return new ApplicationError(`An error occured on GQL Comp delete.`);
               }
             },
           },
@@ -262,6 +272,7 @@ module.exports = {
         'Mutation.updateUsersPermissionsUser': {
           policies: [
             (policyContext, config, { strapi }) => {
+              // policy to ensure that users can only update their own user profile
               return parseInt(policyContext.state.user.id) === parseInt(policyContext.args.id);
             }
           ],
