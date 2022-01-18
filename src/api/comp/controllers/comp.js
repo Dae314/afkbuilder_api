@@ -46,8 +46,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
             });
             tagList.push(newTag.id);
           } catch(err) {
-            logger.error(`An error occurred on REST comp creation while adding a new tag: ${JSON.stringify(err)}`);
-            return ctx.throw(500);
+            logger.error(`An error occurred on REST comp create while adding a new tag: ${JSON.stringify(err)}`);
+            return ctx.throw(500, `An error occurred on REST comp create while adding a new tag.`);
           }
         } else {
           // tag already exists, add its ID to the tagList
@@ -79,8 +79,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
             });
             heroList.push(newHero.id);
           } catch(err) {
-            logger.error(`An error occurred on REST comp creation while adding a new hero: ${JSON.stringify(err)}`);
-            return ctx.throw(500);
+            logger.error(`An error occurred on REST comp create while adding a new hero: ${JSON.stringify(err)}`);
+            return ctx.throw(500, `An error occurred on REST comp create while adding a new hero`);
           }
         } else {
           // hero already exists, add its ID to the heroList
@@ -96,7 +96,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       logger.debug(`REST Comp create called with args: ${JSON.stringify(ctx.request.body)}`);
       return entity;
     } catch(err) {
-      logger.error(`An error occurred on REST Comp creation: ${JSON.stringify(err)}`);
+      logger.error(`An error occurred on REST Comp create: ${JSON.stringify(err)}`);
       return ctx.throw(500);
     }
   },
@@ -117,8 +117,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         return ctx.throw(403, `You are not authorized to update this entry.`);
       }
     } catch(err) {
-      logger.error(`An error occured finding comp on REST Comp update: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      logger.error(`An error occured on REST Comp update while finding comp: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occured on REST Comp update while finding comp.`);
     }
 
     // parse tags field if necessary
@@ -145,7 +145,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
               tagList.push(newTag.id);
             } catch(err) {
               logger.error(`An error occurred on REST comp update while adding a new tag: ${JSON.stringify(err)}`);
-              return ctx.throw(500);
+              return ctx.throw(500, `An error occurred on REST comp update while adding a new tag.`);
             }
           } else {
             // tag already exists, add its ID to the tagList
@@ -180,7 +180,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
               heroList.push(newHero.id);
             } catch(err) {
               logger.error(`An error occurred on REST comp update while adding a new hero: ${JSON.stringify(err)}`);
-              return ctx.throw(500);
+              return ctx.throw(500, `An error occurred on REST comp update while adding a new hero.`);
             }
           } else {
             // hero already exists, add its ID to the heroList
@@ -199,7 +199,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return response;
     } catch(err) {
       logger.error(`An error occured on REST Comp update: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      return ctx.throw(500, `An error occured on REST Comp update.`);
     }
   },
   async delete(ctx) {
@@ -219,8 +219,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         return ctx.throw(403, `You are not authorized to delete this entry.`);
       }
     } catch(err) {
-      logger.error(`An error occured finding comp on REST Comp delete: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      logger.error(`An error occured on REST Comp delete while finding comp: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occured on REST Comp delete while finding comp.`);
     }
 
     try {
@@ -230,7 +230,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return response;
     } catch(err) {
       logger.error(`An error occured on REST Comp delete: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      return ctx.throw(500, `An error occured on REST Comp delete.`);
     }
   },
   async getAuthoredComps(ctx) {
@@ -242,7 +242,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return { data: {comps: comps} };
     } catch (err) {
       logger.error(`An error occurred looking up comps for getAuthoredComps: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      return ctx.throw(500, `An error occurred looking up comps for getAuthoredComps.`);
     }
   },
   async hasUpvoted(ctx) {
@@ -254,7 +254,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return { data: {upvoted: result} };
     } catch (err) {
       logger.error(`An error occurred looking up comp for hasUpvoted: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      return ctx.throw(500, `An error occurred looking up comp for hasUpvoted.`);
     }
   },
   async getAllUpvoted(ctx) {
@@ -266,7 +266,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return { data: { comps: result} };
     } catch (err) {
       logger.error(`An error occurred looking up user for getAllUpvoted: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      return ctx.throw(500, `An error occurred looking up user for getAllUpvoted.`);
     }
   },
   async getUpvotes(ctx) {
@@ -277,7 +277,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return { data: {upvotes: comp.upvoters.length} };
     } catch (err) {
       logger.error(`An error occurred looking up comp for getUpvotes: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      return ctx.throw(500, `An error occurred looking up comp for getUpvotes.`);
     }
   },
   async toggleUpvote(ctx) {
@@ -289,8 +289,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       });
       hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
     } catch (err) {
-      logger.error(`An error occurred looking up comp for toggleUpvote: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      logger.error(`An error occurred on toggleUpvote while looking up comp.: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred on toggleUpvote while looking up comp.`);
     }
     try {
       if(hasUpvoted) {
@@ -313,8 +313,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         return { data: {action: 'add'} };
       }
     } catch(err) {
-      logger.error(`An error occurred modifying comp for toggleUpvote: ${JSON.stringify(err)}`);
-      return ctx.throw(500);
+      logger.error(`An error occurred updating comp for toggleUpvote: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred updating comp for toggleUpvote.`);
     }
   },
 }));
