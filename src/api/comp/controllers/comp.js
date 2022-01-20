@@ -5,6 +5,7 @@
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
+const { sanitize } = require("@strapi/utils");
 const logger = require('../../../utilities/logger');
 
 function selectProps(...props) {
@@ -24,6 +25,9 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     const author = user.id;
     ctx.request.body.data.author = author;
 
+    // required for sanitize step
+    const { auth } = ctx.state;
+
     // parse tags field
     let tagList = [];
     const inputTags = ctx.request.body.data.tags.map(e => e.trim());
@@ -39,10 +43,14 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         if (!existingTag) {
           // tag does not exist yet, add a new tag
           try {
+            const contentType = strapi.contentTypes['api::tag.tag'];
+            const sanitizedInputData = await sanitize.contentAPI.input(
+              { name: tag },
+              contentType,
+              { auth }
+            );
             const newTag = await strapi.entityService.create('api::tag.tag', {
-              data: {
-                name: tag,
-              },
+              data: sanitizedInputData,
             });
             tagList.push(newTag.id);
           } catch(err) {
@@ -72,10 +80,14 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         if (!existingHero) {
           // hero does not exist yet, add a new hero
           try {
+            const contentType = strapi.contentTypes['api::hero.hero'];
+            const sanitizedInputData = await sanitize.contentAPI.input(
+              { name: hero },
+              contentType,
+              { auth }
+            );
             const newHero = await strapi.entityService.create('api::hero.hero', {
-              data: {
-                name: hero,
-              },
+              data: sanitizedInputData,
             });
             heroList.push(newHero.id);
           } catch(err) {
@@ -121,6 +133,9 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occured on REST Comp update while finding comp.`);
     }
 
+    // required for sanitize step
+    const { auth } = ctx.state;
+
     // parse tags field if necessary
     if(ctx.request.body.data.tags) {
       let tagList = [];
@@ -137,10 +152,14 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
           if (!existingTag) {
             // tag does not exist yet, add a new tag
             try {
+              const contentType = strapi.contentTypes['api::tag.tag'];
+              const sanitizedInputData = await sanitize.contentAPI.input(
+                { name: tag },
+                contentType,
+                { auth }
+              );
               const newTag = await strapi.entityService.create('api::tag.tag', {
-                data: {
-                  name: tag,
-                },
+                data: sanitizedInputData,
               });
               tagList.push(newTag.id);
             } catch(err) {
@@ -172,10 +191,14 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
           if (!existingHero) {
             // hero does not exist yet, add a new hero
             try {
+              const contentType = strapi.contentTypes['api::hero.hero'];
+              const sanitizedInputData = await sanitize.contentAPI.input(
+                { name: hero },
+                contentType,
+                { auth }
+              );
               const newHero = await strapi.entityService.create('api::hero.hero', {
-                data: {
-                  name: hero,
-                },
+                data: sanitizedInputData,
               });
               heroList.push(newHero.id);
             } catch(err) {
