@@ -324,7 +324,6 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
             upvoters: new_upvoters,
           },
         });
-        return { data: {action: 'rm'} };
       } else {
         // user has not upvoted, assume add upvote
         const new_upvoters = comp.upvoters.concat(ctx.state.user);
@@ -333,8 +332,13 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
             upvoters: new_upvoters,
           },
         });
-        return { data: {action: 'add'} };
       }
+      // return the list of comps that the user upvoted
+      const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
+        populate: 'upvoted_comps',
+      });
+      const result = user.upvoted_comps.map(selectProps('id', 'uuid'));
+      return { data: {comps: result} };
     } catch(err) {
       logger.error(`An error occurred updating comp for toggleUpvote: ${JSON.stringify(err)}`);
       return ctx.throw(500, `An error occurred updating comp for toggleUpvote.`);
