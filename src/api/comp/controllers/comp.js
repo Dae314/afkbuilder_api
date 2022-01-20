@@ -259,7 +259,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getAuthoredComps(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['uuid'],
+        fields: ['uuid', 'updatedAt'],
         filters: { author: { id: ctx.state.user.id } },
       });
       return { data: {comps: comps} };
