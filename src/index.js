@@ -6,6 +6,7 @@ const logger = require('./utilities/logger');
 // resolver imports
 const { coreCreateMutationResolve, coreUpdateMutationResolve, coreDeleteMutationResolve } = require("./utilities/core-resolvers.js");
 const { ForbiddenError, ApplicationError } = require('@strapi/utils').errors;
+const { sanitize } = require("@strapi/utils");
 
 module.exports = {
   /**
@@ -43,6 +44,9 @@ module.exports = {
               const author = user.id;
               args.data.author = author;
 
+              // required for sanitize step
+              const { auth } = context.state;
+
               // parse tags field
               let tagList = [];
               const inputTags = args.data.tags.map(e => e.trim());
@@ -58,10 +62,14 @@ module.exports = {
                   if (!existingTag) {
                     // tag does not exist yet, add a new tag
                     try {
+                      const contentType = strapi.contentTypes['api::tag.tag'];
+                      const sanitizedInputData = await sanitize.contentAPI.input(
+                        { name: tag },
+                        contentType,
+                        { auth }
+                      );
                       const newTag = await strapi.entityService.create('api::tag.tag', {
-                        data: {
-                          name: tag,
-                        },
+                        data: sanitizedInputData,
                       });
                       tagList.push(newTag.id);
                     } catch(err) {
@@ -91,10 +99,14 @@ module.exports = {
                   if (!existingHero) {
                     // hero does not exist yet, add a new hero
                     try {
+                      const contentType = strapi.contentTypes['api::hero.hero'];
+                      const sanitizedInputData = await sanitize.contentAPI.input(
+                        { name: hero },
+                        contentType,
+                        { auth }
+                      );
                       const newHero = await strapi.entityService.create('api::hero.hero', {
-                        data: {
-                          name: hero,
-                        },
+                        data: sanitizedInputData,
                       });
                       heroList.push(newHero.id);
                     } catch(err) {
@@ -145,6 +157,9 @@ module.exports = {
                 return new ApplicationError(`An error occured GQL Comp update while finding comp.`);
               }
 
+              // required for sanitize step
+              const { auth } = context.state;
+
               // parse tags field if necessary
               if(args.data.tags) {
                 let tagList = [];
@@ -161,10 +176,14 @@ module.exports = {
                     if (!existingTag) {
                       // tag does not exist yet, add a new tag
                       try {
+                        const contentType = strapi.contentTypes['api::tag.tag'];
+                        const sanitizedInputData = await sanitize.contentAPI.input(
+                          { name: tag },
+                          contentType,
+                          { auth }
+                        );
                         const newTag = await strapi.entityService.create('api::tag.tag', {
-                          data: {
-                            name: tag,
-                          },
+                          data: sanitizedInputData,
                         });
                         tagList.push(newTag.id);
                       } catch(err) {
@@ -196,10 +215,14 @@ module.exports = {
                     if (!existingHero) {
                       // hero does not exist yet, add a new hero
                       try {
+                        const contentType = strapi.contentTypes['api::hero.hero'];
+                        const sanitizedInputData = await sanitize.contentAPI.input(
+                          { name: hero },
+                          contentType,
+                          { auth }
+                        );
                         const newHero = await strapi.entityService.create('api::hero.hero', {
-                          data: {
-                            name: hero,
-                          },
+                          data: sanitizedInputData,
                         });
                         heroList.push(newHero.id);
                       } catch(err) {
