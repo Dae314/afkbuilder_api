@@ -39,13 +39,21 @@ module.exports = {
         Mutation: {
           createComp: {
             resolve: async (parent, args, context) => {
+              // required for sanitize step
+              const { auth } = context.state;
+
+              // sanitize input data
+              const compContentType = strapi.contentTypes['api::comp.comp'];
+              const compSanitizedInputData = await sanitize.contentAPI.input(
+                args.data,
+                compContentType,
+                { auth }
+              );
+
               // add author field
               const user = context.state.user;
               const author = user.id;
-              args.data.author = author;
-
-              // required for sanitize step
-              const { auth } = context.state;
+              compSanitizedInputData.author = author;
 
               // parse tags field
               let tagList = [];
@@ -82,7 +90,7 @@ module.exports = {
                   }
                 }
               }
-              args.data.tags = tagList;
+              compSanitizedInputData.tags = tagList;
 
               // parse heroes field
               let heroList = [];
@@ -119,10 +127,11 @@ module.exports = {
                   }
                 }
               }
-              args.data.heroes = heroList;
+              compSanitizedInputData.heroes = heroList;
 
               // try to create the comp
               try {
+                args.data = compSanitizedInputData;
                 const resolver = await coreCreateMutationResolve(
                   "api::comp.comp",
                   parent,

@@ -20,13 +20,21 @@ function selectProps(...props) {
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async create(ctx) {
+    // required for sanitize step
+    const { auth } = ctx.state;
+
+    // sanitize input data
+    const compContentType = strapi.contentTypes['api::comp.comp'];
+    const compSanitizedInputData = await sanitize.contentAPI.input(
+      ctx.request.body.data,
+      compContentType,
+      { auth }
+    );
+
     // add author field
     const user = ctx.state.user;
     const author = user.id;
-    ctx.request.body.data.author = author;
-
-    // required for sanitize step
-    const { auth } = ctx.state;
+    compSanitizedInputData.author = author;
 
     // parse tags field
     let tagList = [];
@@ -63,7 +71,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         }
       }
     }
-    ctx.request.body.data.tags = tagList;
+    compSanitizedInputData.tags = tagList;
 
     // parse heroes field
     let heroList = [];
@@ -100,11 +108,11 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         }
       }
     }
-    ctx.request.body.data.heroes = heroList;
+    compSanitizedInputData.heroes = heroList;
 
     // try to create the comp
     try {
-      const entity = await strapi.entityService.create('api::comp.comp', ctx.request.body);
+      const entity = await strapi.entityService.create('api::comp.comp', {data: compSanitizedInputData});
       logger.debug(`REST Comp create called with args: ${JSON.stringify(ctx.request.body)}`);
       return entity;
     } catch(err) {
