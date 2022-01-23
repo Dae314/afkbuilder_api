@@ -5,7 +5,7 @@ const logger = require('./utilities/logger');
 
 // resolver imports
 const { coreCreateMutationResolve, coreUpdateMutationResolve, coreDeleteMutationResolve } = require("./utilities/core-resolvers.js");
-const { ForbiddenError, ApplicationError } = require('@strapi/utils').errors;
+const { ApplicationError } = require('@strapi/utils').errors;
 const { sanitize } = require("@strapi/utils");
 
 module.exports = {
@@ -148,24 +148,6 @@ module.exports = {
           },
           updateComp: {
             resolve: async (parent, args, context) => {
-              // check that the user is authorized to update the comp
-              try {
-                const [comp] = await strapi.entityService.findMany('api::comp.comp', {
-                  fields: ['name'],
-                  filters: {
-                    id: args.id,
-                    author: context.state.user.id,
-                  },
-                });
-                if (!comp) {
-                  logger.error(`A forbidden error occurred on GQL Comp update: ${JSON.stringify(args)}`);
-                  return new ForbiddenError(`You are not authorized to update this entry.`);
-                }
-              } catch(err) {
-                logger.error(`An error occured on GQL Comp update while finding comp: ${JSON.stringify(err)}`);
-                return new ApplicationError(`An error occured GQL Comp update while finding comp.`);
-              }
-
               // required for sanitize step
               const { auth } = context.state;
 
@@ -265,25 +247,6 @@ module.exports = {
           },
           deleteComp: {
             resolve: async (parent, args, context) => {
-              // check that the user is authorized to delete the comp
-              try {
-                const [comp] = await strapi.entityService.findMany('api::comp.comp', {
-                  fields: ['name'],
-                  filters: {
-                    id: args.id,
-                    author: context.state.user.id,
-                  },
-                });
-                if (!comp) {
-                  logger.error(`A forbidden error occurred on GQL Comp delete: ${JSON.stringify(args)}`);
-                  return new ForbiddenError(`You are not authorized to delete this entry.`);
-                }
-              } catch(err) {
-                logger.error(`An error occured on GQL Comp delete while finding comp: ${JSON.stringify(err)}`);
-                return new ApplicationError(`An error occured on GQL Comp delete while finding comp.`);
-              }
-
-              // try to delete the comp
               try {
                 const resolver = await coreDeleteMutationResolve(
                   "api::comp.comp",
@@ -308,6 +271,12 @@ module.exports = {
               return parseInt(policyContext.state.user.id) === parseInt(policyContext.args.id);
             }
           ],
+        },
+        'Mutation.updateComp': {
+          policies: ['global::gql_author_policy'],
+        },
+        'Mutation.deleteComp': {
+          policies: ['global::gql_author_policy'],
         },
       },
     }));
