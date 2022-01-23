@@ -47,27 +47,6 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     }
   },
   async update(ctx) {
-    // check that the user is authorized to update the comp
-    try {
-      const [comp] = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['name'],
-        filters: {
-          id: ctx.params.id,
-          author: ctx.state.user.id,
-        },
-      });
-
-      if (!comp) {
-        const sanitized_ctx = {method: ctx.request.method, url: ctx.request.url, body: ctx.request.body};
-        logger.error(`A forbidden error occurred on REST Comp update: ${JSON.stringify(sanitized_ctx)}`);
-        return ctx.throw(403, `You are not authorized to update this entry.`);
-      }
-    } catch(err) {
-      logger.error(`An error occured on REST Comp update while finding comp: ${JSON.stringify(err)}`);
-      return ctx.throw(500, `An error occured on REST Comp update while finding comp.`);
-    }
-
-    // try to update the comp
     try {
       const response = await super.update(ctx);
       const sanitized_ctx = {method: ctx.request.method, url: ctx.request.url, body: ctx.request.body};
@@ -79,26 +58,6 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     }
   },
   async delete(ctx) {
-    // check that the user is authorized to delete the comp
-    try {
-      const [comp] = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['name'],
-        filters: {
-          id: ctx.params.id,
-          author: ctx.state.user.id,
-        },
-      });
-
-      if (!comp) {
-        const sanitized_ctx = {method: ctx.request.method, url: ctx.request.url, body: ctx.request.body};
-        logger.error(`A forbidden error occurred on REST Comp delete: ${JSON.stringify(sanitized_ctx)}`);
-        return ctx.throw(403, `You are not authorized to delete this entry.`);
-      }
-    } catch(err) {
-      logger.error(`An error occured on REST Comp delete while finding comp: ${JSON.stringify(err)}`);
-      return ctx.throw(500, `An error occured on REST Comp delete while finding comp.`);
-    }
-
     try {
       const response = await super.delete(ctx);
       const sanitized_ctx = {method: ctx.request.method, url: ctx.request.url, body: ctx.request.body};
