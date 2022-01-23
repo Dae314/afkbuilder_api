@@ -5,7 +5,7 @@ const logger = require('./utilities/logger');
 
 // resolver imports
 const { coreCreateMutationResolve, coreUpdateMutationResolve, coreDeleteMutationResolve } = require("./utilities/core-resolvers.js");
-const { ForbiddenError, ApplicationError } = require('@strapi/utils').errors;
+const { ApplicationError } = require('@strapi/utils').errors;
 const { sanitize } = require("@strapi/utils");
 
 module.exports = {
