@@ -9,8 +9,8 @@ module.exports = {
     },
     {
       method: 'GET',
-      path: '/custom-comps/gettotalupvotes',
-      handler: 'comp.getTotalUpvotes',
+      path: '/custom-comps/getreceivedupvotes',
+      handler: 'comp.getReceivedUpvotes',
     },
     {
       method: 'GET',

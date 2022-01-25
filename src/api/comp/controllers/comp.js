@@ -156,7 +156,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred updating comp for toggleUpvote.`);
     }
   },
-  async getTotalUpvotes(ctx) {
+  async getReceivedUpvotes(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
         filters: { author: { id: ctx.state.user.id } },
@@ -168,8 +168,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       }
       return { data: {upvotes: total} };
     } catch (err) {
-      logger.error(`An error occurred looking up comp for getUpvotes: ${JSON.stringify(err)}`);
-      return ctx.throw(500, `An error occurred looking up comp for getUpvotes.`);
+      logger.error(`An error occurred looking up comp for getReceivedUpvotes: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up comp for getReceivedUpvotes.`);
     }
   },
 }));
