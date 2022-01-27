@@ -172,4 +172,29 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comp for getReceivedUpvotes.`);
     }
   },
+  async getAuthorProfile(ctx) {
+    try {
+      const comps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['name','uuid'],
+        filters: { author: { id: ctx.params.id } },
+        populate: 'upvoters',
+      });
+      const resultComps = comps.map(selectProps('id', 'uuid', 'name'));
+      let upvotes = 0;
+      for(let comp of comps) {
+        upvotes += comp.upvoters.length;
+      }
+      const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
+        fields: ['username','avatar'],
+        populate: 'upvoted_comps',
+      });
+      author.upvotes = upvotes;
+      const resultUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name'));
+      author.upvoted_comps = resultUpvotedComps;
+      return { data: { comps: resultComps, author: author } };
+    } catch (err) {
+      logger.error(`An error occurred looking up information for getAuthorProfile: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up information for getAuthorProfile.`);
+    }
+  },
 }));

@@ -80,6 +80,9 @@
     },
     "local_comps": {
       "type": "json"
+    },
+    "avatar": {
+      "type": "string"
     }
   }
 }
