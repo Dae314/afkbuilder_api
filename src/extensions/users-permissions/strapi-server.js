@@ -11,7 +11,7 @@ module.exports = (plugin) => {
 
     try {
       // decrypt the jwt
-      const obj = await strapi.plugin('users-permissions').service('jwt').verify(token);
+      const obj = await strapi.service("plugin::users-permissions.jwt").verify(token);
 
       // send the decrypted object
       return obj;
