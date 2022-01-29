@@ -1,6 +1,5 @@
 'use strict';
 
-const session = require("koa-session2"); // required import for oauth
 const logger = require('./utilities/logger');
 
 // resolver imports
@@ -17,11 +16,6 @@ module.exports = {
    */
   // register(/*{ strapi }*/) {},
   register({ strapi }) {
-    // required snippet for oauth
-    strapi.server.use(session({
-      secret: "grant",
-    }));
-
     const extensionService = strapi.plugin("graphql").service("extension");
 
     extensionService.use(({ nexus }) => ({
