@@ -9,6 +9,11 @@ module.exports = {
       method: 'GET',
       path: '/custom-comps/getauthor/:id',
       handler: 'comp.getAuthorProfile',
-    }
+    },
+    {
+      method: 'GET',
+      path: '/custom-comps/getcompauthor/:id',
+      handler: 'comp.getCompAuthor',
+    },
   ],
 };

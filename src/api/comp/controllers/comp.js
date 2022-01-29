@@ -197,4 +197,17 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up information for getAuthorProfile.`);
     }
   },
+  async getCompAuthor(ctx) {
+    try {
+      const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        populate: 'author',
+      });
+      const filter = selectProps('id', 'username', 'avatar');
+      const author = filter(comp.author);
+      return { data: { author: author } };
+    } catch (err) {
+      logger.error(`An error occurred looking up information for getCompAuthor: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up information for getCompAuthor.`);
+    }
+  },
 }));
