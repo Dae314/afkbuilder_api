@@ -202,7 +202,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
         populate: 'author',
       });
-      const filter = selectProps('id', 'username', 'avatar');
+      const filter = selectProps('username', 'avatar');
       const author = filter(comp.author);
       return { data: { author: author } };
     } catch (err) {
