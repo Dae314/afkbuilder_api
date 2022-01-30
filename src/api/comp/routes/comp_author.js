@@ -8,6 +8,9 @@ module.exports = {
     {
       method: 'GET',
       path: '/custom-comps/getauthor/:id',
+      config: {
+        middlewares: [ 'global::rest_transform_username' ],
+      },
       handler: 'comp.getAuthorProfile',
     },
     {
