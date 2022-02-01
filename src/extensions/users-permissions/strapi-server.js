@@ -30,7 +30,7 @@ module.exports = (plugin) => {
     },
   });
 
-  // modify the user update route to only allow users to update their own profile
+  // modify the user update route with owner check and username check
   plugin.policies['userUpdate'] = (policyContext, config, { strapi }) => {
     return parseInt(policyContext.state.user.id) === parseInt(policyContext.params.id);
   };
@@ -41,7 +41,19 @@ module.exports = (plugin) => {
     handler: 'user.update',
     config: {
       prefix: '',
-      policies: ['userUpdate'],
+      policies: ['userUpdate','global::rest_username_policy'],
+    }
+  };
+
+  // modify user create route with username check
+  const userCreateIdx = plugin.routes['content-api'].routes.findIndex(e => e.method === 'POST' && e.handler === 'user.create');
+  plugin.routes['content-api'].routes[userCreateIdx] = {
+    method: 'POST',
+    path: '/users',
+    handler: 'user.create',
+    config: {
+      prefix: '',
+      policies: ['global::rest_username_policy'],
     }
   };
 
