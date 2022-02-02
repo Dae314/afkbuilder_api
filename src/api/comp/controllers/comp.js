@@ -168,6 +168,96 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comp for getReceivedUpvotes.`);
     }
   },
+  // return true/false if the authenticated user has downvoted the specified entry
+  async hasDownvoted(ctx) {
+    try {
+      const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        populate: 'downvoters',
+      });
+      const result = comp.downvoters.some(e => e.id === ctx.state.user.id);
+      return { data: {downvoted: result} };
+    } catch (err) {
+      logger.error(`An error occurred looking up comp for hasDownvoted: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up comp for hasDownvoted.`);
+    }
+  },
+  // return an array of all entries that the authenticated user has downvoted
+  async getAllDownvoted(ctx) {
+    try {
+      const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
+        populate: 'downvoted_comps',
+      });
+      const result = user.downvoted_comps.map(selectProps('id', 'uuid'));
+      return { data: { comps: result} };
+    } catch (err) {
+      logger.error(`An error occurred looking up user for getAllDownvoted: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up user for getAllDownvoted.`);
+    }
+  },
+  // toggle whether the authenticated user has/has not upvoted an entry
+  async toggleDownvote(ctx) {
+    let comp;
+    let hasDownvoted;
+    let hasUpvoted;
+    try {
+      comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        populate: ['upvoters', 'downvoters'],
+      });
+      hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
+      hasDownvoted = comp.downvoters.some(e => e.id === ctx.state.user.id);
+    } catch (err) {
+      logger.error(`An error occurred on toggleDownvote while looking up comp.: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred on toggleDownvote while looking up comp.`);
+    }
+    if(hasUpvoted) {
+      return ctx.throw(405, `User may not downvote if they have already upvoted.`);
+    }
+    try {
+      if(hasDownvoted) {
+        // user already Downvoted, assume remove Downvote
+        const new_downvoters = comp.downvoters.filter(e => e.id !== ctx.state.user.id);
+        await strapi.entityService.update('api::comp.comp', ctx.params.id, {
+          data: {
+            downvoters: new_downvoters,
+          },
+        });
+      } else {
+        // user has not downvoted, assume add downvote
+        const new_downvoters = comp.downvoters.concat(ctx.state.user);
+        await strapi.entityService.update('api::comp.comp', ctx.params.id, {
+          data: {
+            downvoters: new_downvoters,
+          },
+        });
+      }
+      // return the list of comps that the user downvoted
+      const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
+        populate: 'downvoted_comps',
+      });
+      const result = user.downvoted_comps.map(selectProps('id', 'uuid'));
+      return { data: {comps: result} };
+    } catch(err) {
+      logger.error(`An error occurred updating comp for toggleDownvote: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred updating comp for toggleDownvote.`);
+    }
+  },
+  // return the total number of downvotes that the authenticated user has received
+  async getReceivedDownvotes(ctx) {
+    try {
+      const comps = await strapi.entityService.findMany('api::comp.comp', {
+        filters: { author: { id: ctx.state.user.id } },
+        populate: 'downvoters',
+      });
+      let total = 0;
+      for(let comp of comps) {
+        total += comp.downvoters.length;
+      }
+      return { data: {downvotes: total} };
+    } catch (err) {
+      logger.error(`An error occurred looking up comp for getReceivedDownvotes: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up comp for getReceivedDownvotes.`);
+    }
+  },
   // public: return the public profile for a user
   async getAuthorProfile(ctx) {
     try {
