@@ -199,6 +199,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     let comp;
     let hasDownvoted;
     let hasUpvoted;
+    let new_downvoters;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
         populate: ['upvoters', 'downvoters'],
@@ -212,24 +213,20 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     if(hasUpvoted) {
       return ctx.throw(405, `User may not downvote if they have already upvoted.`);
     }
+    if(hasDownvoted) {
+      // user already downvoted, assume remove downvote
+      new_downvoters = comp.downvoters.filter(e => e.id !== ctx.state.user.id);
+    } else {
+      // user has not downvoted, assume add downvote
+      new_downvoters = comp.downvoters.concat(ctx.state.user);
+    }
     try {
-      if(hasDownvoted) {
-        // user already Downvoted, assume remove Downvote
-        const new_downvoters = comp.downvoters.filter(e => e.id !== ctx.state.user.id);
-        await strapi.entityService.update('api::comp.comp', ctx.params.id, {
-          data: {
-            downvoters: new_downvoters,
-          },
-        });
-      } else {
-        // user has not downvoted, assume add downvote
-        const new_downvoters = comp.downvoters.concat(ctx.state.user);
-        await strapi.entityService.update('api::comp.comp', ctx.params.id, {
-          data: {
-            downvoters: new_downvoters,
-          },
-        });
-      }
+      await strapi.entityService.update('api::comp.comp', ctx.params.id, {
+        data: {
+          downvoters: new_downvoters,
+          downvotes: new_downvoters.length,
+        },
+      });
       // return the list of comps that the user downvoted
       const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
         populate: 'downvoted_comps',
