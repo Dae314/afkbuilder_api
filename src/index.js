@@ -270,8 +270,11 @@ module.exports = {
             'global::gql_username_policy',
           ],
         },
+        'Mutation.createComp': {
+          policies: ['global::gql_upvote_policy'],
+        },
         'Mutation.updateComp': {
-          policies: ['global::gql_author_policy'],
+          policies: ['global::gql_author_policy', 'global::gql_upvote_policy'],
         },
         'Mutation.deleteComp': {
           policies: ['global::gql_author_policy'],

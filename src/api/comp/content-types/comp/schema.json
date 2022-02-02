@@ -48,6 +48,11 @@
       "relation": "manyToMany",
       "target": "api::hero.hero",
       "inversedBy": "comps"
+    },
+    "total_upvotes": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
     }
   }
 }

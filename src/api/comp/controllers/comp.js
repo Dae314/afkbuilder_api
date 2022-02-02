@@ -134,6 +134,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         await strapi.entityService.update('api::comp.comp', ctx.params.id, {
           data: {
             upvoters: new_upvoters,
+            total_upvotes: new_upvoters.length,
           },
         });
       } else {
@@ -142,6 +143,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         await strapi.entityService.update('api::comp.comp', ctx.params.id, {
           data: {
             upvoters: new_upvoters,
+            total_upvotes: new_upvoters.length,
           },
         });
       }

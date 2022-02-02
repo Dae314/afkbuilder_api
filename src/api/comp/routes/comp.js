@@ -10,10 +10,11 @@ module.exports = createCoreRouter('api::comp.comp', {
   config: {
     create: {
       middlewares: [ 'global::rest_comp_tags', 'global::rest_comp_heroes' ],
+      policies: ['global::rest_upvote_policy'],
     },
     update: {
       middlewares: ['global::rest_comp_tags', 'global::rest_comp_heroes' ],
-      policies: ['global::rest_author_policy'],
+      policies: ['global::rest_author_policy','global::rest_upvote_policy'],
     },
     delete: {
       policies: ['global::rest_author_policy'],
