@@ -104,17 +104,6 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up user for getAllUpvoted.`);
     }
   },
-  async getUpvotes(ctx) {
-    try {
-      const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
-        populate: 'upvoters',
-      });
-      return { data: {upvotes: comp.upvoters.length} };
-    } catch (err) {
-      logger.error(`An error occurred looking up comp for getUpvotes: ${JSON.stringify(err)}`);
-      return ctx.throw(500, `An error occurred looking up comp for getUpvotes.`);
-    }
-  },
   async toggleUpvote(ctx) {
     let comp;
     let hasUpvoted;

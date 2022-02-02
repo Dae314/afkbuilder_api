@@ -18,11 +18,6 @@ module.exports = {
       handler: 'comp.hasUpvoted',
     },
     {
-      method: 'GET',
-      path: '/custom-comps/getupvotes/:id',
-      handler: 'comp.getUpvotes',
-    },
-    {
       method: 'PUT',
       path: '/custom-comps/toggleupvote/:id',
       handler: 'comp.toggleUpvote',
