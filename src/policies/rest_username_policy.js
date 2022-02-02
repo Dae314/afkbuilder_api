@@ -1,7 +1,7 @@
 const { PolicyError } = require('@strapi/utils').errors;
 
 module.exports = async (ctx, config, { strapi }) => {
-  if(ctx.request.body.data.username) {
+  if('username' in ctx.request.body.data) {
     const invalidChars = new RegExp('[^A-Za-z0-9-._~ ]');
     if(invalidChars.test(ctx.request.body.data.username)) {
       throw new PolicyError(`Username can only contain letters, numbers, spaces, and - . _ ~ characters`, {policy: 'rest_username_policy'});
