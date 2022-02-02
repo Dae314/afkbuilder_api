@@ -83,6 +83,12 @@
     },
     "avatar": {
       "type": "string"
+    },
+    "downvoted_comps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::comp.comp",
+      "inversedBy": "downvoters"
     }
   }
 }
