@@ -31,9 +31,6 @@ module.exports = (plugin) => {
   });
 
   // modify the user update route with owner check and username check
-  plugin.policies['userUpdate'] = (policyContext, config, { strapi }) => {
-    return parseInt(policyContext.state.user.id) === parseInt(policyContext.params.id);
-  };
   const userUpdateIdx = plugin.routes['content-api'].routes.findIndex(e => e.method === 'PUT' && e.handler === 'user.update');
   plugin.routes['content-api'].routes[userUpdateIdx] = {
     method: 'PUT',
@@ -41,7 +38,7 @@ module.exports = (plugin) => {
     handler: 'user.update',
     config: {
       prefix: '',
-      policies: ['userUpdate','global::rest_username_policy'],
+      policies: ['global::rest_profile_owner_policy','global::rest_username_policy'],
     }
   };
 

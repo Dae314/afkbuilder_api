@@ -262,13 +262,7 @@ module.exports = {
           policies: ['global::gql_username_policy'],
         },
         'Mutation.updateUsersPermissionsUser': {
-          policies: [
-            (policyContext, config, { strapi }) => {
-              // policy to ensure that users can only update their own user profile
-              return parseInt(policyContext.state.user.id) === parseInt(policyContext.args.id);
-            },
-            'global::gql_username_policy',
-          ],
+          policies: ['global::gql_profile_owner_policy', 'global::gql_username_policy'],
         },
         'Mutation.createComp': {
           policies: ['global::gql_upvote_policy'],
