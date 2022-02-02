@@ -110,36 +110,36 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   // toggle whether the authenticated user has/has not upvoted an entry
   async toggleUpvote(ctx) {
     let comp;
+    let hasDownvoted;
     let hasUpvoted;
+    let new_upvoters;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
-        populate: 'upvoters',
+        populate: ['upvoters', 'downvoters'],
       });
       hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
+      hasDownvoted = comp.downvoters.some(e => e.id === ctx.state.user.id);
     } catch (err) {
       logger.error(`An error occurred on toggleUpvote while looking up comp.: ${JSON.stringify(err)}`);
       return ctx.throw(500, `An error occurred on toggleUpvote while looking up comp.`);
     }
+    if(hasDownvoted) {
+      return ctx.throw(405, `User may not upvote if they have already downvoted.`);
+    }
+    if(hasUpvoted) {
+      // user already upvoted, assume remove upvote
+      new_upvoters = comp.upvoters.filter(e => e.id !== ctx.state.user.id);
+    } else {
+      // user has not upvoted, assume add upvote
+      new_upvoters = comp.upvoters.concat(ctx.state.user);
+    }
     try {
-      if(hasUpvoted) {
-        // user already upvoted, assume remove upvote
-        const new_upvoters = comp.upvoters.filter(e => e.id !== ctx.state.user.id);
-        await strapi.entityService.update('api::comp.comp', ctx.params.id, {
-          data: {
-            upvoters: new_upvoters,
-            score: new_upvoters.length,
-          },
-        });
-      } else {
-        // user has not upvoted, assume add upvote
-        const new_upvoters = comp.upvoters.concat(ctx.state.user);
-        await strapi.entityService.update('api::comp.comp', ctx.params.id, {
-          data: {
-            upvoters: new_upvoters,
-            score: new_upvoters.length,
-          },
-        });
-      }
+      await strapi.entityService.update('api::comp.comp', ctx.params.id, {
+        data: {
+          upvoters: new_upvoters,
+          upvotes: new_upvoters.length,
+        },
+      });
       // return the list of comps that the user upvoted
       const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
         populate: 'upvoted_comps',
