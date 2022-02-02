@@ -1593,6 +1593,11 @@
     escape-string-regexp "^2.0.0"
     lodash.deburr "^4.1.0"
 
+"@stdlib/dist-stats-base-dists-flat@^0.0.96":
+  version "0.0.96"
+  resolved "https://registry.yarnpkg.com/@stdlib/dist-stats-base-dists-flat/-/dist-stats-base-dists-flat-0.0.96.tgz#589378b39b448900b0179c727316bd2807e54870"
+  integrity sha512-29avEvddWsqtty9LTsGaPzu/uQoVHuisaoXIWzsAlaWh4Jn97G3Kvt0sKCtAcZAkIR2F2MiKfDPcxVEnAklbGg==
+
 "@strapi/admin@4.0.6":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@strapi/admin/-/admin-4.0.6.tgz#fe10aab68183a762a8e72b982d28c24e327b1bde"

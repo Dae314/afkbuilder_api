@@ -7,6 +7,8 @@
 const { createCoreController } = require('@strapi/strapi').factories;
 const { sanitize } = require("@strapi/utils");
 const logger = require('../../../utilities/logger');
+const base = require( '@stdlib/dist-stats-base-dists-flat' ).base;
+
 
 function selectProps(...props) {
   return function(obj){
@@ -17,6 +19,13 @@ function selectProps(...props) {
     return newObj;
   }
 }
+
+function calcScore() {
+  const result = base.dists.beta.quantile(0.8, 2.0, 1.0);
+  return result;
+}
+
+console.log(calcScore());
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async create(ctx) {
