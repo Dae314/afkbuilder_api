@@ -49,7 +49,7 @@
       "target": "api::hero.hero",
       "inversedBy": "comps"
     },
-    "total_upvotes": {
+    "score": {
       "type": "integer",
       "default": 0,
       "min": 0
