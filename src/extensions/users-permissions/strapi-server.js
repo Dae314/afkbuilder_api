@@ -30,6 +30,18 @@ module.exports = (plugin) => {
     },
   });
 
+  // modify the user delete route with owner check
+  const userDeleteIdx = plugin.routes['content-api'].routes.findIndex(e => e.method === 'DELETE' && e.handler === 'user.destroy');
+  plugin.routes['content-api'].routes[userDeleteIdx] = {
+    method: 'DELETE',
+    path: '/users/:id',
+    handler: 'user.destroy',
+    config: {
+      prefix: '',
+      policies: ['global::rest_profile_owner_policy'],
+    }
+  };
+
   // modify the user update route with owner check and username check
   const userUpdateIdx = plugin.routes['content-api'].routes.findIndex(e => e.method === 'PUT' && e.handler === 'user.update');
   plugin.routes['content-api'].routes[userUpdateIdx] = {
