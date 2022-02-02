@@ -68,6 +68,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occured on REST Comp delete.`);
     }
   },
+  // return an array of all comps that the authenticated user has published
   async getAuthoredComps(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
@@ -80,6 +81,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comps for getAuthoredComps.`);
     }
   },
+  // return true/false if the authenticated user has upvoted the specified entry
   async hasUpvoted(ctx) {
     try {
       const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
@@ -92,6 +94,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comp for hasUpvoted.`);
     }
   },
+  // return an array of all entries that the authenticated user has upvoted
   async getAllUpvoted(ctx) {
     try {
       const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
@@ -104,6 +107,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up user for getAllUpvoted.`);
     }
   },
+  // toggle whether the authenticated user has/has not upvoted an entry
   async toggleUpvote(ctx) {
     let comp;
     let hasUpvoted;
@@ -147,6 +151,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred updating comp for toggleUpvote.`);
     }
   },
+  // return the total number of upvotes that the authenticated user has received
   async getReceivedUpvotes(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
@@ -163,6 +168,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comp for getReceivedUpvotes.`);
     }
   },
+  // public: return the public profile for a user
   async getAuthorProfile(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
@@ -188,6 +194,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up information for getAuthorProfile.`);
     }
   },
+  // public: return the sanitized author information for the specified entry
   async getCompAuthor(ctx) {
     try {
       const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
