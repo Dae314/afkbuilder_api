@@ -268,10 +268,10 @@ module.exports = {
           policies: ['global::gql_profile_owner_policy', 'global::gql_username_policy'],
         },
         'Mutation.createComp': {
-          policies: ['global::gql_upvote_policy'],
+          policies: ['global::gql_score_policy'],
         },
         'Mutation.updateComp': {
-          policies: ['global::gql_author_policy', 'global::gql_upvote_policy'],
+          policies: ['global::gql_author_policy', 'global::gql_score_policy'],
         },
         'Mutation.deleteComp': {
           policies: ['global::gql_author_policy'],
