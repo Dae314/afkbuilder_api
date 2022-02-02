@@ -60,6 +60,16 @@
       "target": "plugin::users-permissions.user",
       "private": true,
       "inversedBy": "downvoted_comps"
+    },
+    "downvotes": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "upvotes": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
     }
   }
 }
