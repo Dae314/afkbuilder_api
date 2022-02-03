@@ -10,6 +10,7 @@ const logger = require('../../../utilities/logger');
 const base = require( '@stdlib/dist-stats-base-dists-flat' ).base;
 
 
+// helper function to select properties out of an object
 function selectProps(...props) {
   return function(obj){
     const newObj = {};
@@ -20,12 +21,13 @@ function selectProps(...props) {
   }
 }
 
-function calcScore() {
-  const result = base.dists.beta.quantile(0.8, 2.0, 1.0);
-  return result;
+// helper function that uses bayesian updating to calculate a comp's score for sorting
+function calcScore(upvotes, downvotes) {
+  const alphaBase = 3.0;
+  const betaBase = 3.0;
+  const quantileLimit = 0.05;
+  return base.dists.beta.quantile(quantileLimit, upvotes + alphaBase, downvotes + betaBase);
 }
-
-console.log(calcScore());
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async create(ctx) {
@@ -147,6 +149,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           upvoters: new_upvoters,
           upvotes: new_upvoters.length,
+          score: calcScore(new_upvoters.length, comp.downvoters.length),
         },
       });
       // return the list of comps that the user upvoted
@@ -234,6 +237,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           downvoters: new_downvoters,
           downvotes: new_downvoters.length,
+          score: calcScore(comp.upvoters.length, new_downvoters.length),
         },
       });
       // return the list of comps that the user downvoted

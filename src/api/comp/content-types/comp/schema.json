@@ -50,7 +50,7 @@
       "inversedBy": "comps"
     },
     "score": {
-      "type": "integer",
+      "type": "float",
       "default": 0,
       "min": 0
     },
