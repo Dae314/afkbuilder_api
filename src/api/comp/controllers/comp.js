@@ -7,8 +7,7 @@
 const { createCoreController } = require('@strapi/strapi').factories;
 const { sanitize } = require("@strapi/utils");
 const logger = require('../../../utilities/logger');
-const base = require( '@stdlib/dist-stats-base-dists-flat' ).base;
-
+const calcScore = require('../../../utilities/calcScore');
 
 // helper function to select properties out of an object
 function selectProps(...props) {
@@ -19,14 +18,6 @@ function selectProps(...props) {
     });
     return newObj;
   }
-}
-
-// helper function that uses bayesian updating to calculate a comp's score for sorting
-function calcScore(upvotes, downvotes) {
-  const alphaBase = 3.0;
-  const betaBase = 3.0;
-  const quantileLimit = 0.05;
-  return base.dists.beta.quantile(quantileLimit, upvotes + alphaBase, downvotes + betaBase);
 }
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
@@ -149,7 +140,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           upvoters: new_upvoters,
           upvotes: new_upvoters.length,
-          score: calcScore(new_upvoters.length, comp.downvoters.length),
+          score: calcScore(new_upvoters.length, comp.downvoters.length, comp.updatedAt),
         },
       });
       // return the list of comps that the user upvoted
@@ -237,7 +228,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           downvoters: new_downvoters,
           downvotes: new_downvoters.length,
-          score: calcScore(comp.upvoters.length, new_downvoters.length),
+          score: calcScore(comp.upvoters.length, new_downvoters.length, comp.updatedAt),
         },
       });
       // return the list of comps that the user downvoted
