@@ -5,5 +5,11 @@ module.exports = async (ctx, config, { strapi }) => {
   if('score' in ctx.request.body.data) {
     throw new PolicyError(`score cannot be set by the API`, {policy: 'rest_score_policy'});
   }
+  if('upvotes' in ctx.request.body.data) {
+    throw new PolicyError(`upvotes cannot be set by the API`, {policy: 'rest_score_policy'});
+  }
+  if('downvotes' in ctx.request.body.data) {
+    throw new PolicyError(`downvotes cannot be set by the API`, {policy: 'rest_score_policy'});
+  }
   return true;
 }
