@@ -3,7 +3,7 @@ const logger = require('../utilities/logger');
 module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     // expect author username in ctx.params.id parameter
-    if(ctx.params.id) {
+    if('id' in ctx.params) {
       const username = ctx.params.id;
       let user;
       try {

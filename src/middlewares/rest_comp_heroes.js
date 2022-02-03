@@ -2,7 +2,7 @@ const { sanitize } = require("@strapi/utils");
 
 module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
-    if(ctx.request.body.data.tags) {
+    if('heroes' in ctx.request.body.data) {
       const { auth } = ctx.state; // required for sanitize
       let heroList = [];
       const inputHeroes = ctx.request.body.data.heroes.map(e => e.trim());
