@@ -1,4 +1,5 @@
 const logger = require('../src/utilities/logger');
+const calcScore = require('../src/utilities/calcScore');
 
 module.exports = {
   // cleanup dead heroes and tags everyday at 1AM
@@ -51,6 +52,47 @@ module.exports = {
           logger.error(`An error occurred during daily delete dead heroes: ${JSON.stringify(err)}`);
         }
       }
+    }
+  },
+  // confirm upvotes, downvotes, and scores everyday at 4AM
+  '0 0 4 * * *': async ({ strapi }) => {
+    let allComps;
+    try {
+      allComps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['id', 'upvotes', 'downvotes', 'score', 'comp_update'],
+        populate: { upvoters: true, downvoters: true },
+        filters: {
+          id: {
+            $notNull: true
+          },
+        },
+      });
+    } catch(err) {
+      logger.error(`An error occurred finding all comps during daily vote cleanup: ${JSON.stringify(err)}`);
+    }
+    try {
+      for(let comp of allComps) {
+        if(comp.upvotes !== comp.upvoters.length || comp.downvotes !== comp.downvoters.length) {
+          // something got de-sync'd with upvotes and downvotes,
+          // fix the upvotes, downvotes, and score fields
+          await strapi.entityService.update('api::comp.comp', comp.id, {
+            data: {
+              upvotes: comp.upvoters.length,
+              downvotes: comp.downvoters.length,
+              score: calcScore(comp.upvoters.length, comp.downvoters.length, comp.comp_update),
+            },
+          });
+        } else {
+          // upvotes and downvotes are good, just update the score
+          await strapi.entityService.update('api::comp.comp', comp.id, {
+            data: {
+              score: calcScore(comp.upvotes, comp.downvotes, comp.comp_update),
+            },
+          });
+        }
+      }
+    } catch(err) {
+      logger.error(`An error occurred updating comp vote information: ${JSON.stringify(err)}`);
     }
   },
 };
