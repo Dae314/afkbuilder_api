@@ -117,6 +117,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     let new_upvoters;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        fields: ['comp_update'],
         populate: ['upvoters', 'downvoters'],
       });
       hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
@@ -140,7 +141,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           upvoters: new_upvoters,
           upvotes: new_upvoters.length,
-          score: calcScore(new_upvoters.length, comp.downvoters.length, comp.updatedAt),
+          score: calcScore(new_upvoters.length, comp.downvoters.length, comp.comp_update),
         },
       });
       // return the list of comps that the user upvoted
@@ -205,6 +206,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     let new_downvoters;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        fields: ['comp_update'],
         populate: ['upvoters', 'downvoters'],
       });
       hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
@@ -228,7 +230,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           downvoters: new_downvoters,
           downvotes: new_downvoters.length,
-          score: calcScore(comp.upvoters.length, new_downvoters.length, comp.updatedAt),
+          score: calcScore(comp.upvoters.length, new_downvoters.length, comp.comp_update),
         },
       });
       // return the list of comps that the user downvoted
