@@ -89,6 +89,9 @@
       "relation": "manyToMany",
       "target": "api::comp.comp",
       "mappedBy": "downvoters"
+    },
+    "saved_comps": {
+      "type": "json"
     }
   }
 }
