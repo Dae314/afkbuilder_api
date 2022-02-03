@@ -167,12 +167,12 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getReceivedUpvotes(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['upvotes'],
         filters: { author: { id: ctx.state.user.id } },
-        populate: 'upvoters',
       });
       let total = 0;
       for(let comp of comps) {
-        total += comp.upvoters.length;
+        total += comp.upvotes;
       }
       return { data: {upvotes: total} };
     } catch (err) {
@@ -255,12 +255,12 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getReceivedDownvotes(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['downvotes'],
         filters: { author: { id: ctx.state.user.id } },
-        populate: 'downvoters',
       });
       let total = 0;
       for(let comp of comps) {
-        total += comp.downvoters.length;
+        total += comp.downvotes;
       }
       return { data: {downvotes: total} };
     } catch (err) {
@@ -272,14 +272,13 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getAuthorProfile(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['name','uuid'],
+        fields: ['name','uuid','upvotes'],
         filters: { author: { id: ctx.params.id } },
-        populate: 'upvoters',
       });
       const resultComps = comps.map(selectProps('id', 'uuid', 'name'));
       let upvotes = 0;
       for(let comp of comps) {
-        upvotes += comp.upvoters.length;
+        upvotes += comp.upvotes;
       }
       const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
         fields: ['username','avatar'],
