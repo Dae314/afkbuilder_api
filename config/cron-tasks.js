@@ -54,8 +54,9 @@ module.exports = {
       }
     }
   },
-  // confirm upvotes, downvotes, and scores everyday at 4AM
+  // cleanup upvotes, downvotes, and decay scores everyday at 4AM
   '0 0 4 * * *': async ({ strapi }) => {
+    const start = Date.now();
     let allComps;
     try {
       allComps = await strapi.entityService.findMany('api::comp.comp', {
@@ -98,7 +99,9 @@ module.exports = {
         }
       }
     } catch(err) {
-      logger.error(`An error occurred updating comp vote information: ${JSON.stringify(err)}`);
+      logger.error(`An error occurred updating comp vote information during daily vote cleanup: ${JSON.stringify(err)}`);
     }
+    const end = Date.now();
+    logger.info(`Daily vote cleanup completed in ${end - start}ms`);
   },
 };
