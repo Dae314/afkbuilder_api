@@ -17,6 +17,7 @@ module.exports = (config, { strapi }) => {
         });
       } catch(err) {
         logger.error(`An error occurred updating score for REST comp update middleware: ${JSON.stringify(err)}`);
+        return ctx.throw(500, `An error occurred on REST comp update while updating score.`);
       }
     }
 

@@ -16,6 +16,7 @@ module.exports = async (next, parent, args, context, info) => {
       });
     } catch(err) {
       logger.error(`An error occurred updating score for GQL comp update middleware: ${JSON.stringify(err)}`);
+      return context.throw(500, `An error occurred on REST comp update while updating score.`);
     }
   }
 
