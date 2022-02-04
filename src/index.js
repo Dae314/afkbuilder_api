@@ -26,7 +26,6 @@ module.exports = {
           definition(t) {
             // expose custom user fields
             t.string('my_heroes');
-            t.string('local_comps');
           },
         }),
       ],
@@ -50,80 +49,6 @@ module.exports = {
               const author = user.id;
               compSanitizedInputData.author = author;
 
-              // parse tags field
-              let tagList = [];
-              const inputTags = args.data.tags.map(e => e.trim());
-              const uniqueTags = [...new Set(inputTags)];
-              for(let tag of uniqueTags) {
-                if(tag) {
-                  let [existingTag] = await strapi.entityService.findMany('api::tag.tag', {
-                    fields: ['id'],
-                    filters: {
-                      name: tag,
-                    },
-                  });
-                  if (!existingTag) {
-                    // tag does not exist yet, add a new tag
-                    try {
-                      const contentType = strapi.contentTypes['api::tag.tag'];
-                      const sanitizedInputData = await sanitize.contentAPI.input(
-                        { name: tag },
-                        contentType,
-                        { auth }
-                      );
-                      const newTag = await strapi.entityService.create('api::tag.tag', {
-                        data: sanitizedInputData,
-                      });
-                      tagList.push(newTag.id);
-                    } catch(err) {
-                      logger.error(`An error occurred on GQL comp creation while adding a new tag: ${JSON.stringify(err)}`);
-                      return new ApplicationError(`An error occurred on GQL comp creation while adding a new tag.`);
-                    }
-                  } else {
-                    // tag already exists, add its ID to the tagList
-                    tagList.push(existingTag.id);
-                  }
-                }
-              }
-              compSanitizedInputData.tags = tagList;
-
-              // parse heroes field
-              let heroList = [];
-              const inputHeroes = args.data.heroes.map(e => e.trim());
-              const uniqueHeroes = [...new Set(inputHeroes)];
-              for(let hero of uniqueHeroes) {
-                if(hero) {
-                  let [existingHero] = await strapi.entityService.findMany('api::hero.hero', {
-                    fields: ['id'],
-                    filters: {
-                      name: hero,
-                    },
-                  });
-                  if (!existingHero) {
-                    // hero does not exist yet, add a new hero
-                    try {
-                      const contentType = strapi.contentTypes['api::hero.hero'];
-                      const sanitizedInputData = await sanitize.contentAPI.input(
-                        { name: hero },
-                        contentType,
-                        { auth }
-                      );
-                      const newHero = await strapi.entityService.create('api::hero.hero', {
-                        data: sanitizedInputData,
-                      });
-                      heroList.push(newHero.id);
-                    } catch(err) {
-                      logger.error(`An error occurred on GQL comp creation while adding a new hero: ${JSON.stringify(err)}`);
-                      return new ApplicationError(`An error occurred on GQL comp creation while adding a new hero.`);
-                    }
-                  } else {
-                    // hero already exists, add its ID to the heroList
-                    heroList.push(existingHero.id);
-                  }
-                }
-              }
-              compSanitizedInputData.heroes = heroList;
-
               // try to create the comp
               try {
                 args.data = compSanitizedInputData;
@@ -143,87 +68,6 @@ module.exports = {
           },
           updateComp: {
             resolve: async (parent, args, context) => {
-              // required for sanitize step
-              const { auth } = context.state;
-
-              // parse tags field if necessary
-              if(args.data.tags) {
-                let tagList = [];
-                const inputTags = args.data.tags.map(e => e.trim());
-                const uniqueTags = [...new Set(inputTags)];
-                for(let tag of uniqueTags) {
-                  if(tag) {
-                    let [existingTag] = await strapi.entityService.findMany('api::tag.tag', {
-                      fields: ['id'],
-                      filters: {
-                        name: tag,
-                      },
-                    });
-                    if (!existingTag) {
-                      // tag does not exist yet, add a new tag
-                      try {
-                        const contentType = strapi.contentTypes['api::tag.tag'];
-                        const sanitizedInputData = await sanitize.contentAPI.input(
-                          { name: tag },
-                          contentType,
-                          { auth }
-                        );
-                        const newTag = await strapi.entityService.create('api::tag.tag', {
-                          data: sanitizedInputData,
-                        });
-                        tagList.push(newTag.id);
-                      } catch(err) {
-                        logger.error(`An error occurred on GQL comp update while adding a new tag: ${JSON.stringify(err)}`);
-                        return new ApplicationError(`An error occurred on GQL comp update while adding a new tag.`);
-                      }
-                    } else {
-                      // tag already exists, add its ID to the tagList
-                      tagList.push(existingTag.id);
-                    }
-                  }
-                }
-                args.data.tags = tagList;
-              }
-
-              // parse heroes field if necessary
-              if(args.data.heroes) {
-                let heroList = [];
-                const inputHeroes = args.data.heroes.map(e => e.trim());
-                const uniqueHeroes = [...new Set(inputHeroes)];
-                for(let hero of uniqueHeroes) {
-                  if(hero) {
-                    let [existingHero] = await strapi.entityService.findMany('api::hero.hero', {
-                      fields: ['id'],
-                      filters: {
-                        name: hero,
-                      },
-                    });
-                    if (!existingHero) {
-                      // hero does not exist yet, add a new hero
-                      try {
-                        const contentType = strapi.contentTypes['api::hero.hero'];
-                        const sanitizedInputData = await sanitize.contentAPI.input(
-                          { name: hero },
-                          contentType,
-                          { auth }
-                        );
-                        const newHero = await strapi.entityService.create('api::hero.hero', {
-                          data: sanitizedInputData,
-                        });
-                        heroList.push(newHero.id);
-                      } catch(err) {
-                        logger.error(`An error occurred on GQL comp update while adding a new hero: ${JSON.stringify(err)}`);
-                        return new ApplicationError(`An error occurred on GQL comp update while adding a new hero.`);
-                      }
-                    } else {
-                      // hero already exists, add its ID to the heroList
-                      heroList.push(existingHero.id);
-                    }
-                  }
-                }
-                args.data.heroes = heroList;
-              }
-
               // try to update the comp
               try {
                 const resolver = await coreUpdateMutationResolve(
@@ -270,10 +114,11 @@ module.exports = {
         },
         'Mutation.createComp': {
           policies: ['global::gql_score_policy'],
+          middlewares: ['global::gql_comp_tags', 'global::gql_comp_heroes']
         },
         'Mutation.updateComp': {
           policies: ['global::gql_author_policy', 'global::gql_score_policy'],
-          middlewares: ['global::gql_comp_update_score'],
+          middlewares: ['global::gql_comp_tags', 'global::gql_comp_heroes', 'global::gql_comp_update_score'],
         },
         'Mutation.deleteComp': {
           policies: ['global::gql_author_policy'],
