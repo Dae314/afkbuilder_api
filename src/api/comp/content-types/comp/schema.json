@@ -14,7 +14,9 @@
   "attributes": {
     "name": {
       "type": "string",
-      "maxLength": 50
+      "maxLength": 50,
+      "required": true,
+      "minLength": 5
     },
     "comp_string": {
       "type": "text",
