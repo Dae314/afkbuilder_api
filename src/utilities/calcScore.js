@@ -7,8 +7,8 @@ const decayBegin = 0; // begin decay immediately
 const decayEnd = 15552000000; // end decay after 180 days
 //               180 * 24 * 60 * 60 * 1000
 const decayTime = decayEnd - decayBegin;
-const decayA = 1.025; // tuning factor to make sure the decay ends at 0.1
-const decayN = 4.5; // tuning parameter to flatten decay at the beginning
+const decayA = 1.037; // tuning factor to make sure the decay ends at 0.1
+const decayN = 3; // tuning parameter to flatten decay at the beginning
 const maxDecay = 0.1; // maximum amount of decay
 
 // decay function to handle decaying data over time
@@ -22,7 +22,7 @@ function calcDecayFactor(updatedAt) {
       return maxDecay;
     } else {
       const decayRatio = (age - decayBegin)/decayTime;
-      return 1 - (decayRatio/decayA)^decayN;
+      return 1 - Math.pow(decayRatio/decayA, decayN);
       // y = 1 - (x/a)^n
     }
   }

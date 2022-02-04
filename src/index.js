@@ -273,6 +273,7 @@ module.exports = {
         },
         'Mutation.updateComp': {
           policies: ['global::gql_author_policy', 'global::gql_score_policy'],
+          middlewares: ['global::gql_comp_update_score'],
         },
         'Mutation.deleteComp': {
           policies: ['global::gql_author_policy'],
