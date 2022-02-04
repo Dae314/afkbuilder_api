@@ -89,6 +89,12 @@
       "relation": "manyToMany",
       "target": "api::comp.comp",
       "mappedBy": "downvoters"
+    },
+    "saved_comps": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::comp.comp",
+      "mappedBy": "saved_users"
     }
   }
 }
