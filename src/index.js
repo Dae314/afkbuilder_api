@@ -1,6 +1,7 @@
 'use strict';
 
 const logger = require('./utilities/logger');
+const {calcScore} = require('./utilities/calcScore');
 // const GraphQLJSON = require('graphql-type-json');
 
 // resolver imports
@@ -48,6 +49,10 @@ module.exports = {
               const user = context.state.user;
               const author = user.id;
               compSanitizedInputData.author = author;
+
+              // add initial score
+              const score = calcScore(0, 0, args.data.comp_update);
+              compSanitizedInputData.score = score;
 
               // try to create the comp
               try {

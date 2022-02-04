@@ -38,6 +38,10 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     const author = user.id;
     compSanitizedInputData.author = author;
 
+    // add initial score
+    const score = calcScore(0, 0, ctx.request.body.data.comp_update);
+    compSanitizedInputData.score = score;
+
     // try to create the comp
     try {
       const entity = await strapi.entityService.create('api::comp.comp', {data: compSanitizedInputData});

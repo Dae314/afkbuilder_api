@@ -72,7 +72,8 @@
       "min": 0
     },
     "comp_update": {
-      "type": "datetime"
+      "type": "datetime",
+      "required": true
     }
   }
 }
