@@ -1,5 +1,5 @@
 const logger = require('../src/utilities/logger');
-const calcScore = require('../src/utilities/calcScore');
+const {calcScore} = require('../src/utilities/calcScore');
 
 module.exports = {
   // cleanup dead heroes and tags everyday at 1AM

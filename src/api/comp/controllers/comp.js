@@ -7,7 +7,7 @@
 const { createCoreController } = require('@strapi/strapi').factories;
 const { sanitize } = require("@strapi/utils");
 const logger = require('../../../utilities/logger');
-const calcScore = require('../../../utilities/calcScore');
+const {calcScore} = require('../../../utilities/calcScore');
 
 // helper function to select properties out of an object
 function selectProps(...props) {
