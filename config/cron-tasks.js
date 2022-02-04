@@ -1,5 +1,5 @@
 const logger = require('../src/utilities/logger');
-const {calcScore} = require('../src/utilities/calcScore');
+const {calcScore, decayBegin, decayEnd} = require('../src/utilities/calcScore');
 
 module.exports = {
   // cleanup dead heroes and tags everyday at 1AM
@@ -83,12 +83,18 @@ module.exports = {
             },
           });
         } else {
-          // upvotes and downvotes are good, just update the score
-          await strapi.entityService.update('api::comp.comp', comp.id, {
-            data: {
-              score: calcScore(comp.upvotes, comp.downvotes, comp.comp_update),
-            },
-          });
+          // upvotes and downvotes are good, just update the score if comp is in the decay range
+          const age = Date.now() - Date.parse(comp.comp_update);
+          const oneDay = 86400000; // one day in ms
+          //             24 * 60 * 60 * 1000
+          if(age >= decayBegin && age <= decayEnd + oneDay) {
+            // add one day to decayEnd to account for this function only running once a day
+            await strapi.entityService.update('api::comp.comp', comp.id, {
+              data: {
+                score: calcScore(comp.upvotes, comp.downvotes, comp.comp_update),
+              },
+            });
+          }
         }
       }
     } catch(err) {
