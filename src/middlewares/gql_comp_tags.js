@@ -29,8 +29,8 @@ module.exports = async (next, parent, args, context, info) => {
             });
             tagList.push(newTag.id);
           } catch(err) {
-            logger.error(`An error occurred on GQL comp create while adding a new tag: ${JSON.stringify(err)}`);
-            return context.throw(500, `An error occurred on GQL comp create while adding a new tag`);
+            logger.error(`An error occurred on GQL comp create/update while adding a new tag: ${JSON.stringify(err)}`);
+            return context.throw(500, `An error occurred on GQL comp create/update while adding a new tag`);
           }
         } else {
           // tag already exists, add its ID to the tagList

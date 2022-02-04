@@ -30,8 +30,8 @@ module.exports = (config, { strapi }) => {
               });
               tagList.push(newTag.id);
             } catch(err) {
-              logger.error(`An error occurred on REST comp create while adding a new tag: ${JSON.stringify(err)}`);
-              return ctx.throw(500, `An error occurred on REST comp create while adding a new tag.`);
+              logger.error(`An error occurred on REST comp create/update while adding a new tag: ${JSON.stringify(err)}`);
+              return ctx.throw(500, `An error occurred on REST comp create/update while adding a new tag.`);
             }
           } else {
             // tag already exists, add its ID to the tagList
