@@ -34,7 +34,7 @@ const betaBase = 3.0; // equivalent to 3 downvotes
 const quantileLimit = 0.05; // 95% of probable results are above the result number
 
 // helper function that uses the beta quantile function and decay to calculate a comp's score for sorting
-function calcScore(upvotes, downvotes, updatedAt) {
+function calcScore({upvotes, downvotes, updatedAt}) {
   const decay = calcDecayFactor(updatedAt);
   return base.dists.beta.quantile(quantileLimit, (upvotes*decay) + alphaBase, (downvotes*decay) + betaBase);
 }

@@ -42,7 +42,11 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     compSanitizedInputData.author = author;
 
     // add initial score
-    const score = calcScore(0, 0, ctx.request.body.data.comp_update);
+    const score = calcScore({
+      upvotes: 0,
+      downvotes: 0,
+      updatedAt: ctx.request.body.data.comp_update
+    });
     compSanitizedInputData.score = score;
 
     // try to create the comp
@@ -195,7 +199,11 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           upvoters: new_upvoters,
           upvotes: new_upvoters.length,
-          score: calcScore(new_upvoters.length, comp.downvoters.length, comp.comp_update),
+          score: calcScore({
+            upvotes: new_upvoters.length,
+            downvotes: comp.downvoters.length,
+            updatedAt: comp.comp_update
+          }),
         },
       });
       // return the list of comps that the user upvoted
@@ -288,7 +296,11 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           downvoters: new_downvoters,
           downvotes: new_downvoters.length,
-          score: calcScore(comp.upvoters.length, new_downvoters.length, comp.comp_update),
+          score: calcScore({
+            upvotes: comp.upvoters.length,
+            downvotes: new_downvoters.length,
+            updatedAt: comp.comp_update
+          }),
         },
       });
       // return the list of comps that the user downvoted
@@ -376,7 +388,11 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         data: {
           saved_users: new_saved_users,
           saves: new_saved_users.length,
-          score: calcScore(comp.upvoters.length, comp.downvoters.length, comp.comp_update),
+          score: calcScore({
+            upvotes: comp.upvoters.length,
+            downvotes: comp.downvoters.length,
+            updatedAt: comp.comp_update
+          }),
         },
       });
       // return the list of comps that the user saved

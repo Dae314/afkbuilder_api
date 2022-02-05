@@ -51,7 +51,11 @@ module.exports = {
               compSanitizedInputData.author = author;
 
               // add initial score
-              const score = calcScore(0, 0, args.data.comp_update);
+              const score = calcScore({
+                upvotes: 0,
+                downvotes: 0,
+                updatedAt: args.data.comp_update
+              });
               compSanitizedInputData.score = score;
 
               // try to create the comp

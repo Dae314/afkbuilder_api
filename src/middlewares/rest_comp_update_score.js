@@ -11,7 +11,11 @@ module.exports = (config, { strapi }) => {
         const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
           fields: ['upvotes', 'downvotes'],
         });
-        const score = calcScore(comp.upvotes, comp.downvotes, ctx.request.body.data.comp_update);
+        const score = calcScore({
+          upvotes: comp.upvotes,
+          downvotes: comp.downvotes,
+          updatedAt: ctx.request.body.data.comp_update
+        });
         await strapi.entityService.update('api::comp.comp', ctx.params.id, {
           data: { score: score },
         });

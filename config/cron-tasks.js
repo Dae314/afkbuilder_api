@@ -80,7 +80,11 @@ module.exports = {
             data: {
               upvotes: comp.upvoters.length,
               downvotes: comp.downvoters.length,
-              score: calcScore(comp.upvoters.length, comp.downvoters.length, comp.comp_update),
+              score: calcScore({
+                upvotes: comp.upvoters.length,
+                downvotes: comp.downvoters.length,
+                updatedAt: comp.comp_update
+              }),
             },
           });
         } else {
@@ -92,7 +96,11 @@ module.exports = {
             // add one day to decayEnd to account for this function only running once a day
             await strapi.entityService.update('api::comp.comp', comp.id, {
               data: {
-                score: calcScore(comp.upvotes, comp.downvotes, comp.comp_update),
+                score: calcScore({
+                  upvotes: comp.upvotes,
+                  downvotes: comp.downvotes,
+                  updatedAt: comp.comp_update
+                }),
               },
             });
           }
