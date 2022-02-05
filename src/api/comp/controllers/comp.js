@@ -45,6 +45,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     const score = calcScore({
       upvotes: 0,
       downvotes: 0,
+      saves: 0,
       updatedAt: ctx.request.body.data.comp_update
     });
     compSanitizedInputData.score = score;
@@ -175,7 +176,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     let new_upvoters;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
-        fields: ['comp_update'],
+        fields: ['comp_update', 'downvotes', 'saves'],
         populate: ['upvoters', 'downvoters'],
       });
       hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
@@ -201,7 +202,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
           upvotes: new_upvoters.length,
           score: calcScore({
             upvotes: new_upvoters.length,
-            downvotes: comp.downvoters.length,
+            downvotes: comp.downvotes,
+            saves: comp.saves,
             updatedAt: comp.comp_update
           }),
         },
@@ -272,7 +274,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     let new_downvoters;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
-        fields: ['comp_update'],
+        fields: ['comp_update', 'upvotes', 'saves'],
         populate: ['upvoters', 'downvoters'],
       });
       hasUpvoted = comp.upvoters.some(e => e.id === ctx.state.user.id);
@@ -297,8 +299,9 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
           downvoters: new_downvoters,
           downvotes: new_downvoters.length,
           score: calcScore({
-            upvotes: comp.upvoters.length,
+            upvotes: comp.upvotes,
             downvotes: new_downvoters.length,
+            saves: comp.saves,
             updatedAt: comp.comp_update
           }),
         },
@@ -368,7 +371,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
     let new_saved_users;
     try {
       comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
-        fields: ['comp_update'],
+        fields: ['comp_update', 'upvotes', 'downvotes'],
         populate: ['upvoters', 'downvoters', 'saved_users'],
       });
       hasSaved = comp.saved_users.some(e => e.id === ctx.state.user.id);
@@ -389,8 +392,9 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
           saved_users: new_saved_users,
           saves: new_saved_users.length,
           score: calcScore({
-            upvotes: comp.upvoters.length,
-            downvotes: comp.downvoters.length,
+            upvotes: comp.upvotes,
+            downvotes: comp.downvotes,
+            saves: new_saved_users.length,
             updatedAt: comp.comp_update
           }),
         },

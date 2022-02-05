@@ -32,11 +32,12 @@ function calcDecayFactor(updatedAt) {
 const alphaBase = 3.0; // equivalent to 3 upvotes
 const betaBase = 3.0; // equivalent to 3 downvotes
 const quantileLimit = 0.05; // 95% of probable results are above the result number
+const saveWeight = 1; // upvote weight of a save (save = 1 upvote)
 
 // helper function that uses the beta quantile function and decay to calculate a comp's score for sorting
-function calcScore({upvotes, downvotes, updatedAt}) {
+function calcScore({upvotes, downvotes, saves, updatedAt}) {
   const decay = calcDecayFactor(updatedAt);
-  return base.dists.beta.quantile(quantileLimit, (upvotes*decay) + alphaBase, (downvotes*decay) + betaBase);
+  return base.dists.beta.quantile(quantileLimit, ((upvotes+(saves*saveWeight))*decay) + alphaBase, (downvotes*decay) + betaBase);
 }
 
 module.exports = { calcScore, decayBegin, decayEnd, decayTime };

@@ -54,6 +54,7 @@ module.exports = {
               const score = calcScore({
                 upvotes: 0,
                 downvotes: 0,
+                saves: 0,
                 updatedAt: args.data.comp_update
               });
               compSanitizedInputData.score = score;

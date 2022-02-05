@@ -8,11 +8,12 @@ module.exports = async (next, parent, args, context, info) => {
     // update the score if the comp_update field is being updated
     try {
       const comp = await strapi.entityService.findOne('api::comp.comp', args.id, {
-        fields: ['upvotes', 'downvotes'],
+        fields: ['upvotes', 'downvotes', 'saves'],
       });
       const score = calcScore({
         upvotes: comp.upvotes,
         downvotes: comp.downvotes,
+        saves: comp.saves,
         updatedAt: args.data.comp_update
       });
       await strapi.entityService.update('api::comp.comp', args.id, {

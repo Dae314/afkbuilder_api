@@ -60,7 +60,7 @@ module.exports = {
     let allComps;
     try {
       allComps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['id', 'upvotes', 'downvotes', 'score', 'comp_update'],
+        fields: ['id', 'upvotes', 'downvotes', 'saves', 'saved_users', 'score', 'comp_update'],
         populate: { upvoters: true, downvoters: true },
         filters: {
           id: {
@@ -73,22 +73,24 @@ module.exports = {
     }
     try {
       for(let comp of allComps) {
-        if(comp.upvotes !== comp.upvoters.length || comp.downvotes !== comp.downvoters.length) {
-          // something got de-sync'd with upvotes and downvotes,
-          // fix the upvotes, downvotes, and score fields
+        if(comp.upvotes !== comp.upvoters.length || comp.downvotes !== comp.downvoters.length || comp.saves !== comp.saved_users.length) {
+          // something got de-sync'd with upvotes, downvotes, or saves,
+          // fix the upvotes, downvotes, saves, and score fields
           await strapi.entityService.update('api::comp.comp', comp.id, {
             data: {
               upvotes: comp.upvoters.length,
               downvotes: comp.downvoters.length,
+              saves: comp.saved_users.length,
               score: calcScore({
                 upvotes: comp.upvoters.length,
                 downvotes: comp.downvoters.length,
+                saves: comp.saved_users.length,
                 updatedAt: comp.comp_update
               }),
             },
           });
         } else {
-          // upvotes and downvotes are good, just update the score if comp is in the decay range
+          // upvotes, downvotes, and saves are good, just update the score if comp is in the decay range
           const age = Date.now() - Date.parse(comp.comp_update);
           const oneDay = 86400000; // one day in ms
           //             24 * 60 * 60 * 1000
@@ -99,6 +101,7 @@ module.exports = {
                 score: calcScore({
                   upvotes: comp.upvotes,
                   downvotes: comp.downvotes,
+                  saves: comp.saves,
                   updatedAt: comp.comp_update
                 }),
               },
