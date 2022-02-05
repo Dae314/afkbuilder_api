@@ -21,6 +21,9 @@ function selectProps(...props) {
 }
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
+  //-----------------
+  // CRUD functions
+  //-----------------
   async create(ctx) {
     // required for sanitize step
     const { auth } = ctx.state;
@@ -74,6 +77,49 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occured on REST Comp delete.`);
     }
   },
+
+  //-----------------
+  // Author functions
+  //-----------------
+  // public: return the public profile for a user
+  async getAuthorProfile(ctx) {
+    try {
+      const comps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['name','uuid','upvotes'],
+        filters: { author: { id: ctx.params.id } },
+      });
+      const resultComps = comps.map(selectProps('id', 'uuid', 'name'));
+      let upvotes = 0;
+      for(let comp of comps) {
+        upvotes += comp.upvotes;
+      }
+      const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
+        fields: ['username','avatar'],
+        populate: 'upvoted_comps',
+      });
+      author.upvotes = upvotes;
+      const resultUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name'));
+      author.upvoted_comps = resultUpvotedComps;
+      return { data: { comps: resultComps, author: author } };
+    } catch (err) {
+      logger.error(`An error occurred looking up information for getAuthorProfile: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up information for getAuthorProfile.`);
+    }
+  },
+  // public: return the sanitized author information for the specified entry
+  async getCompAuthor(ctx) {
+    try {
+      const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        populate: 'author',
+      });
+      const filter = selectProps('username', 'avatar');
+      const author = filter(comp.author);
+      return { data: { author: author } };
+    } catch (err) {
+      logger.error(`An error occurred looking up information for getCompAuthor: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up information for getCompAuthor.`);
+    }
+  },
   // return an array of all comps that the authenticated user has published
   async getAuthoredComps(ctx) {
     try {
@@ -87,6 +133,10 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comps for getAuthoredComps.`);
     }
   },
+
+  //-----------------
+  // upvote functions
+  //-----------------
   // return true/false if the authenticated user has upvoted the specified entry
   async hasUpvoted(ctx) {
     try {
@@ -176,6 +226,10 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comp for getReceivedUpvotes.`);
     }
   },
+
+  //-----------------
+  // downvote functions
+  //-----------------
   // return true/false if the authenticated user has downvoted the specified entry
   async hasDownvoted(ctx) {
     try {
@@ -265,43 +319,92 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comp for getReceivedDownvotes.`);
     }
   },
-  // public: return the public profile for a user
-  async getAuthorProfile(ctx) {
-    try {
-      const comps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['name','uuid','upvotes'],
-        filters: { author: { id: ctx.params.id } },
-      });
-      const resultComps = comps.map(selectProps('id', 'uuid', 'name'));
-      let upvotes = 0;
-      for(let comp of comps) {
-        upvotes += comp.upvotes;
-      }
-      const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
-        fields: ['username','avatar'],
-        populate: 'upvoted_comps',
-      });
-      author.upvotes = upvotes;
-      const resultUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name'));
-      author.upvoted_comps = resultUpvotedComps;
-      return { data: { comps: resultComps, author: author } };
-    } catch (err) {
-      logger.error(`An error occurred looking up information for getAuthorProfile: ${JSON.stringify(err)}`);
-      return ctx.throw(500, `An error occurred looking up information for getAuthorProfile.`);
-    }
-  },
-  // public: return the sanitized author information for the specified entry
-  async getCompAuthor(ctx) {
+
+  //-----------------
+  // save functions
+  //-----------------
+  // return true/false if the authenticated user has saved the specified entry
+  async hasSaved(ctx) {
     try {
       const comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
-        populate: 'author',
+        populate: 'saved_users',
       });
-      const filter = selectProps('username', 'avatar');
-      const author = filter(comp.author);
-      return { data: { author: author } };
+      const result = comp.saved_users.some(e => e.id === ctx.state.user.id);
+      return { data: {saved: result} };
     } catch (err) {
-      logger.error(`An error occurred looking up information for getCompAuthor: ${JSON.stringify(err)}`);
-      return ctx.throw(500, `An error occurred looking up information for getCompAuthor.`);
+      logger.error(`An error occurred looking up comp for hasSaved: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up comp for hasSaved.`);
+    }
+  },
+  // return an array of all entries that the authenticated user has saved
+  async getAllSaved(ctx) {
+    try {
+      const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
+        populate: 'saved_comps',
+      });
+      const result = user.saved_comps.map(selectProps('id', 'uuid'));
+      return { data: { comps: result} };
+    } catch (err) {
+      logger.error(`An error occurred looking up user for getAllSaved: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up user for getAllSaved.`);
+    }
+  },
+  // toggle whether the authenticated user has/has not upvoted an entry
+  async toggleSave(ctx) {
+    let comp;
+    let hasSaved;
+    let new_saved_users;
+    try {
+      comp = await strapi.entityService.findOne('api::comp.comp', ctx.params.id, {
+        fields: ['comp_update'],
+        populate: ['upvoters', 'downvoters', 'saved_users'],
+      });
+      hasSaved = comp.saved_users.some(e => e.id === ctx.state.user.id);
+    } catch (err) {
+      logger.error(`An error occurred on toggleSave while looking up comp.: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred on toggleSave while looking up comp.`);
+    }
+    if(hasSaved) {
+      // user already saved, assume remove save
+      new_saved_users = comp.saved_users.filter(e => e.id !== ctx.state.user.id);
+    } else {
+      // user has not saved, assume add save
+      new_saved_users = comp.saved_users.concat(ctx.state.user);
+    }
+    try {
+      await strapi.entityService.update('api::comp.comp', ctx.params.id, {
+        data: {
+          saved_users: new_saved_users,
+          saves: new_saved_users.length,
+          score: calcScore(comp.upvoters.length, comp.downvoters.length, comp.comp_update),
+        },
+      });
+      // return the list of comps that the user saved
+      const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
+        populate: 'saved_comps',
+      });
+      const result = user.saved_comps.map(selectProps('id', 'uuid'));
+      return { data: {comps: result} };
+    } catch(err) {
+      logger.error(`An error occurred updating comp for toggleSave: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred updating comp for toggleSave.`);
+    }
+  },
+  // return the total number of downvotes that the authenticated user has received
+  async getReceivedSaves(ctx) {
+    try {
+      const comps = await strapi.entityService.findMany('api::comp.comp', {
+        fields: ['saves'],
+        filters: { author: { id: ctx.state.user.id } },
+      });
+      let total = 0;
+      for(let comp of comps) {
+        total += comp.saves;
+      }
+      return { data: {saves: total} };
+    } catch (err) {
+      logger.error(`An error occurred looking up comp for getReceivedSaves: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up comp for getReceivedSaves.`);
     }
   },
 }));
