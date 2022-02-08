@@ -102,6 +102,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         fields: ['username','avatar'],
         populate: 'upvoted_comps',
       });
+      delete author.id;
       author.upvotes = upvotes;
       const resultUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name'));
       author.upvoted_comps = resultUpvotedComps;
