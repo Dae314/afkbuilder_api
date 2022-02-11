@@ -90,11 +90,19 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getAuthorProfile(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['name','uuid','upvotes'],
+        fields: ['name','uuid','upvotes','downvotes'],
         filters: { author: { id: ctx.params.id } },
+        populate: {'tags': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
       });
-      const resultComps = comps.map(selectProps('id', 'uuid', 'name'));
-      let upvotes = 0;
+      // first pass filter for top level properties
+      const firstFilterComps = comps.map(selectProps('id', 'uuid', 'name', 'upvotes', 'downvotes', 'tags', 'author'));
+      // second pass filter for author properties
+      const authorFilter = selectProps('username', 'avatar');
+      const resultComps = firstFilterComps.map(e => {
+        e.author = authorFilter(e.author);
+        return e;
+      });
+      let upvotes = 0; // compute received upvotes
       for(let comp of comps) {
         upvotes += comp.upvotes;
       }
