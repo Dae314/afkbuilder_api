@@ -108,11 +108,20 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       }
       const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
         fields: ['username','avatar'],
-        populate: 'upvoted_comps',
+        populate: { 'upvoted_comps': {
+          populate: { 'tags': {fields: ['name']}, 'author': {fields: ['username', 'avatar']} }
+        }
+      },
       });
       delete author.id;
       author.upvotes = upvotes;
-      const resultUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name'));
+      // first pass filter for top level properties
+      const firstFilterUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name', 'tags', 'upvotes', 'downvotes', 'author'));
+      // second pass filter for author properties
+      const resultUpvotedComps = firstFilterUpvotedComps.map(e => {
+        e.author = authorFilter(e.author);
+        return e;
+      });
       author.upvoted_comps = resultUpvotedComps;
       return { data: { comps: resultComps, author: author } };
     } catch (err) {
