@@ -90,12 +90,12 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getAuthorProfile(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['name','uuid','upvotes','downvotes'],
+        fields: ['name','uuid','upvotes','downvotes','comp_update'],
         filters: { author: { id: ctx.params.id } },
         populate: {'tags': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
       });
       // first pass filter for top level properties
-      const firstFilterComps = comps.map(selectProps('id', 'uuid', 'name', 'upvotes', 'downvotes', 'tags', 'author'));
+      const firstFilterComps = comps.map(selectProps('id', 'uuid', 'name', 'upvotes', 'downvotes', 'tags', 'author', 'comp_update'));
       // second pass filter for author properties
       const authorFilter = selectProps('username', 'avatar');
       const resultComps = firstFilterComps.map(e => {
@@ -116,7 +116,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       delete author.id;
       author.upvotes = upvotes;
       // first pass filter for top level properties
-      const firstFilterUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name', 'tags', 'upvotes', 'downvotes', 'author'));
+      const firstFilterUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name', 'tags', 'upvotes', 'downvotes', 'author', 'comp_update'));
       // second pass filter for author properties
       const resultUpvotedComps = firstFilterUpvotedComps.map(e => {
         e.author = authorFilter(e.author);
