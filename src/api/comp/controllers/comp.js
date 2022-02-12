@@ -92,10 +92,10 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       const comps = await strapi.entityService.findMany('api::comp.comp', {
         fields: ['name','uuid','upvotes','downvotes','comp_update'],
         filters: { author: { id: ctx.params.id } },
-        populate: {'tags': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
+        populate: {'heroes': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
       });
       // first pass filter for top level properties
-      const firstFilterComps = comps.map(selectProps('id', 'uuid', 'name', 'upvotes', 'downvotes', 'tags', 'author', 'comp_update'));
+      const firstFilterComps = comps.map(selectProps('id', 'uuid', 'name', 'upvotes', 'downvotes', 'heroes', 'author', 'comp_update'));
       // second pass filter for author properties
       const authorFilter = selectProps('username', 'avatar');
       const resultComps = firstFilterComps.map(e => {
@@ -109,14 +109,14 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
         fields: ['username','avatar'],
         populate: { 'upvoted_comps': {
-          populate: { 'tags': {fields: ['name']}, 'author': {fields: ['username', 'avatar']} }
+          populate: { 'heroes': {fields: ['name']}, 'author': {fields: ['username', 'avatar']} }
         }
       },
       });
       delete author.id;
       author.upvotes = upvotes;
       // first pass filter for top level properties
-      const firstFilterUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name', 'tags', 'upvotes', 'downvotes', 'author', 'comp_update'));
+      const firstFilterUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name', 'heroes', 'upvotes', 'downvotes', 'author', 'comp_update'));
       // second pass filter for author properties
       const resultUpvotedComps = firstFilterUpvotedComps.map(e => {
         e.author = authorFilter(e.author);
