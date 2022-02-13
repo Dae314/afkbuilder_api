@@ -235,7 +235,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         populate: 'upvoted_comps',
       });
       const result = user.upvoted_comps.map(selectProps('id', 'uuid'));
-      return { data: {comps: result} };
+      return { data: {comps: result, upvotes: new_upvoters.length} };
     } catch(err) {
       logger.error(`An error occurred updating comp for toggleUpvote: ${JSON.stringify(err)}`);
       return ctx.throw(500, `An error occurred updating comp for toggleUpvote.`);
@@ -333,7 +333,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         populate: 'downvoted_comps',
       });
       const result = user.downvoted_comps.map(selectProps('id', 'uuid'));
-      return { data: {comps: result} };
+      return { data: {comps: result, downvotes: new_downvoters.length} };
     } catch(err) {
       logger.error(`An error occurred updating comp for toggleDownvote: ${JSON.stringify(err)}`);
       return ctx.throw(500, `An error occurred updating comp for toggleDownvote.`);
