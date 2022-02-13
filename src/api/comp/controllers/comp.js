@@ -93,6 +93,9 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         fields: ['name','uuid','upvotes','downvotes','comp_update'],
         filters: { author: { id: ctx.params.id } },
         populate: {'heroes': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
+        orderBy: {score: 'desc'},
+        start: 1,
+        limit: 5,
       });
       // first pass filter for top level properties
       const firstFilterComps = comps.map(selectProps('id', 'uuid', 'name', 'upvotes', 'downvotes', 'heroes', 'author', 'comp_update'));
@@ -108,21 +111,22 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       }
       const author = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.params.id, {
         fields: ['username','avatar'],
-        populate: { 'upvoted_comps': {
-          populate: { 'heroes': {fields: ['name']}, 'author': {fields: ['username', 'avatar']} }
+        populate: { 'saved_comps': {
+          populate: { 'heroes': {fields: ['name']}, 'author': {fields: ['username', 'avatar']} },
+          orderBy: {score: 'desc'},
         }
       },
       });
       delete author.id;
       author.upvotes = upvotes;
       // first pass filter for top level properties
-      const firstFilterUpvotedComps = author.upvoted_comps.map(selectProps('id', 'uuid', 'name', 'heroes', 'upvotes', 'downvotes', 'author', 'comp_update'));
+      const firstFilterSavedComps = author.saved_comps.map(selectProps('id', 'uuid', 'name', 'heroes', 'upvotes', 'downvotes', 'author', 'comp_update'));
       // second pass filter for author properties
-      const resultUpvotedComps = firstFilterUpvotedComps.map(e => {
+      const resultSavedComps = firstFilterSavedComps.map(e => {
         e.author = authorFilter(e.author);
         return e;
       });
-      author.upvoted_comps = resultUpvotedComps;
+      author.saved_comps = resultSavedComps.slice(0,5); // return only 5 saved comps
       return { data: { comps: resultComps, author: author } };
     } catch (err) {
       logger.error(`An error occurred looking up information for getAuthorProfile: ${JSON.stringify(err)}`);
