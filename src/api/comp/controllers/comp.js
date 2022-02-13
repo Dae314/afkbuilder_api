@@ -93,7 +93,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         fields: ['name','uuid','upvotes','downvotes','comp_update'],
         filters: { author: { id: ctx.params.id } },
         populate: {'heroes': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
-        orderBy: {score: 'desc'},
+        sort: {score: 'desc'},
         start: 1,
         limit: 5,
       });
@@ -113,7 +113,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         fields: ['username','avatar'],
         populate: { 'saved_comps': {
           populate: { 'heroes': {fields: ['name']}, 'author': {fields: ['username', 'avatar']} },
-          orderBy: {score: 'desc'},
+          sort: {score: 'desc'},
         }
       },
       });
