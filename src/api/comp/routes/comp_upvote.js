@@ -15,11 +15,17 @@ module.exports = {
     {
       method: 'GET',
       path: '/custom-comps/hasupvoted/:id',
+      config: {
+        middlewares: [ 'global::rest_transform_comp_uuid' ],
+      },
       handler: 'comp.hasUpvoted',
     },
     {
       method: 'PUT',
       path: '/custom-comps/toggleupvote/:id',
+      config: {
+        middlewares: [ 'global::rest_transform_comp_uuid' ],
+      },
       handler: 'comp.toggleUpvote',
     },
   ]

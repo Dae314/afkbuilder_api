@@ -16,6 +16,9 @@ module.exports = {
     {
       method: 'GET',
       path: '/custom-comps/getcompauthor/:id',
+      config: {
+        middlewares: [ 'global::rest_transform_comp_uuid' ],
+      },
       handler: 'comp.getCompAuthor',
     },
   ],
