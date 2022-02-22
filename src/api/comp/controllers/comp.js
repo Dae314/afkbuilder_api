@@ -94,7 +94,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         filters: { author: { id: ctx.params.id } },
         populate: {'heroes': { fields: ['name'] }, 'author': {fields: ['username', 'avatar']}},
         sort: {score: 'desc'},
-        start: 1,
+        start: 0,
         limit: 5,
       });
       // first pass filter for top level properties
@@ -151,7 +151,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   async getAuthoredComps(ctx) {
     try {
       const comps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['uuid', 'comp_update'],
+        fields: ['uuid'],
         filters: { author: { id: ctx.state.user.id } },
       });
       return { data: {comps: comps} };
