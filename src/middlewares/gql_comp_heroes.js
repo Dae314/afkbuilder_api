@@ -1,5 +1,6 @@
 const logger = require('../utilities/logger');
 const { sanitize } = require("@strapi/utils");
+const { ApplicationError } = require('@strapi/utils').errors;
 
 module.exports = async (next, parent, args, context, info) => {
   if('heroes' in args.data) {
@@ -30,7 +31,7 @@ module.exports = async (next, parent, args, context, info) => {
             heroList.push(newHero.id);
           } catch(err) {
             logger.error(`An error occurred on GQL comp create/update while adding a new hero: ${JSON.stringify(err)}`);
-            return context.throw(500, `An error occurred on GQL comp create/update while adding a new hero`);
+            return new ApplicationError(`An error occurred on GQL comp create/update while adding a new hero`);
           }
         } else {
           // hero already exists, add its ID to the heroList

@@ -1,5 +1,6 @@
 const {calcScore} = require('../utilities/calcScore');
 const logger = require('../utilities/logger');
+const { ApplicationError } = require('@strapi/utils').errors;
 
 module.exports = async (next, parent, args, context, info) => {
   const res = await next(parent, args, context, info);
@@ -21,7 +22,7 @@ module.exports = async (next, parent, args, context, info) => {
       });
     } catch(err) {
       logger.error(`An error occurred updating score for GQL comp update middleware: ${JSON.stringify(err)}`);
-      return context.throw(500, `An error occurred on REST comp update while updating score.`);
+      return new ApplicationError(`An error occurred on GQL comp update while updating score.`);
     }
   }
 

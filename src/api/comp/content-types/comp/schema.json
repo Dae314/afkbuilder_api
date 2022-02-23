@@ -20,7 +20,8 @@
     },
     "comp_string": {
       "type": "text",
-      "required": true
+      "required": true,
+      "regex": "^XQAAAA[A-Za-z0-9_-]+$"
     },
     "author": {
       "type": "relation",
