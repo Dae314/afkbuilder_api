@@ -158,8 +158,8 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         populate: 'comps',
       });
       const authors = users
-        .map(e => ({...e, totalComps: e.comps.length}))
-        .map(selectProps('username', 'totalComps'))
+        .map(e => ({...e, totalComps: e.comps.length, name: e.username}))
+        .map(selectProps('name', 'totalComps'))
         .filter(e => e.totalComps > 0);
       return { data: authors };
     } catch (err) {
