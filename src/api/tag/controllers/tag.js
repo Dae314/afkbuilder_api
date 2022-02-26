@@ -12,7 +12,7 @@ module.exports = createCoreController('api::tag.tag', ({ strapi }) => ({
   //-----------------
   // Custom functions
   //-----------------
-  // return an array of all users with >0 published comps
+  // return an array of all tags with >0 related comps
   async getAllTags(ctx) {
     try {
       const tags = await strapi.entityService.findMany('api::tag.tag', {
