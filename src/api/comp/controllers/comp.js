@@ -8,17 +8,7 @@ const { createCoreController } = require('@strapi/strapi').factories;
 const { sanitize } = require("@strapi/utils");
 const logger = require('../../../utilities/logger');
 const {calcScore} = require('../../../utilities/calcScore');
-
-// helper function to select properties out of an object
-function selectProps(...props) {
-  return function(obj){
-    const newObj = {};
-    props.forEach(name => {
-      newObj[name] = obj[name];
-    });
-    return newObj;
-  }
-}
+const {selectProps} = require('../../../utilities/selectProps');
 
 module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
   //-----------------
