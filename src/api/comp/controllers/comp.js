@@ -160,6 +160,23 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       return ctx.throw(500, `An error occurred looking up comps for getAuthoredComps.`);
     }
   },
+  // return an array of all users with >0 published comps
+  async getAllAuthors(ctx) {
+    try {
+      const users = await strapi.entityService.findMany('plugin::users-permissions.user', {
+        fields: ['username'],
+        populate: 'comps',
+      });
+      const authors = users
+        .map(e => ({...e, totalComps: e.comps.length}))
+        .map(selectProps('username', 'totalComps'))
+        .filter(e => e.totalComps > 0);
+      return { data: authors };
+    } catch (err) {
+      logger.error(`An error occurred looking up users for getAllAuthors: ${JSON.stringify(err)}`);
+      return ctx.throw(500, `An error occurred looking up users for getAllAuthors.`);
+    }
+  },
 
   //-----------------
   // upvote functions
