@@ -21,7 +21,7 @@ module.exports = createCoreController('api::tag.tag', ({ strapi }) => ({
       });
       const cleanTags = tags
         .map(e => ({...e, totalComps: e.comps.length}))
-        .map(selectProps('name', 'totalComps'))
+        .map(selectProps('name', 'id', 'totalComps'))
         .filter(e => e.totalComps > 0);
       return { data: cleanTags };
     } catch (err) {

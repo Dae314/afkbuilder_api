@@ -21,7 +21,7 @@ module.exports = createCoreController('api::hero.hero', ({ strapi }) => ({
       });
       const cleanHeroes = heroes
         .map(e => ({...e, totalComps: e.comps.length}))
-        .map(selectProps('name', 'totalComps'))
+        .map(selectProps('name', 'id', 'totalComps'))
         .filter(e => e.totalComps > 0);
       return { data: cleanHeroes };
     } catch (err) {
