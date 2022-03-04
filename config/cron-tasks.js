@@ -5,6 +5,7 @@ module.exports = {
   // cleanup dead heroes and tags everyday at 1AM
   '0 0 1 * * *': async ({ strapi }) => {
     // delete all dead tags (tags with no comps associated)
+    const start = Date.now();
     let allTags;
     try {
       allTags = await strapi.entityService.findMany('api::tag.tag', {
@@ -53,6 +54,8 @@ module.exports = {
         }
       }
     }
+    const end = Date.now();
+    logger.info(`Daily hero and tag cleanup completed in ${end - start}ms`);
   },
   // cleanup upvotes, downvotes, and decay scores everyday at 4AM
   '0 0 4 * * *': async ({ strapi }) => {
