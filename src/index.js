@@ -55,7 +55,7 @@ module.exports = {
                 upvotes: 0,
                 downvotes: 0,
                 saves: 0,
-                updatedAt: args.data.comp_update
+                updatedAt: new Date(),
               });
               compSanitizedInputData.score = score;
 
@@ -128,7 +128,7 @@ module.exports = {
         },
         'Mutation.updateComp': {
           policies: ['global::gql_author_policy', 'global::gql_score_policy'],
-          middlewares: ['global::gql_comp_tags', 'global::gql_comp_heroes', 'global::gql_comp_update_score'],
+          middlewares: ['global::gql_comp_tags', 'global::gql_comp_heroes'],
         },
         'Mutation.deleteComp': {
           policies: ['global::gql_author_policy'],

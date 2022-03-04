@@ -60,13 +60,8 @@ module.exports = {
     let allComps;
     try {
       allComps = await strapi.entityService.findMany('api::comp.comp', {
-        fields: ['id', 'upvotes', 'downvotes', 'saves', 'saved_users', 'score', 'comp_update'],
-        populate: { upvoters: true, downvoters: true },
-        filters: {
-          id: {
-            $notNull: true
-          },
-        },
+        fields: ['id', 'upvotes', 'downvotes', 'saves', 'score', 'createdAt'],
+        populate: ['upvoters', 'downvoters', 'saved_users'],
       });
     } catch(err) {
       logger.error(`An error occurred finding all comps during daily vote cleanup: ${JSON.stringify(err)}`);
@@ -85,13 +80,13 @@ module.exports = {
                 upvotes: comp.upvoters.length,
                 downvotes: comp.downvoters.length,
                 saves: comp.saved_users.length,
-                updatedAt: comp.comp_update
+                updatedAt: comp.createdAt
               }),
             },
           });
         } else {
           // upvotes, downvotes, and saves are good, just update the score if comp is in the decay range
-          const age = Date.now() - Date.parse(comp.comp_update);
+          const age = Date.now() - Date.parse(comp.createdAt);
           const oneDay = 86400000; // one day in ms
           //             24 * 60 * 60 * 1000
           if(age >= decayBegin && age <= decayEnd + oneDay) {
@@ -102,7 +97,7 @@ module.exports = {
                   upvotes: comp.upvotes,
                   downvotes: comp.downvotes,
                   saves: comp.saves,
-                  updatedAt: comp.comp_update
+                  updatedAt: comp.createdAt
                 }),
               },
             });

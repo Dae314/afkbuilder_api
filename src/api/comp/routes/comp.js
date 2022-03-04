@@ -13,7 +13,7 @@ module.exports = createCoreRouter('api::comp.comp', {
       policies: ['global::rest_score_policy'],
     },
     update: {
-      middlewares: ['global::rest_comp_tags', 'global::rest_comp_heroes', 'global::rest_comp_update_score'],
+      middlewares: ['global::rest_comp_tags', 'global::rest_comp_heroes'],
       policies: ['global::rest_author_policy','global::rest_score_policy'],
     },
     delete: {
