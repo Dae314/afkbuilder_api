@@ -82,7 +82,8 @@
       "type": "json"
     },
     "avatar": {
-      "type": "string"
+      "type": "string",
+      "default": "saveas"
     },
     "downvoted_comps": {
       "type": "relation",
