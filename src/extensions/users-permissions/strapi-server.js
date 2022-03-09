@@ -39,6 +39,7 @@ module.exports = (plugin) => {
     config: {
       prefix: '',
       policies: ['global::rest_profile_owner_policy'],
+      middlewares: ['global::rest_user_del_cleanup'],
     }
   };
 

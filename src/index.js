@@ -118,6 +118,7 @@ module.exports = {
         },
         'Mutation.deleteUsersPermissionsUser': {
           policies: ['global::gql_profile_owner_policy'],
+          middlewares: ['global::gql_user_del_cleanup'],
         },
         'Mutation.updateUsersPermissionsUser': {
           policies: ['global::gql_profile_owner_policy', 'global::gql_username_policy'],

@@ -11,7 +11,7 @@ module.exports = async (next, parent, args, context, info) => {
     for(let comp of comps) {
       await strapi.entityService.update('api::comp.comp', comp.id, {
         data: {
-          author: env('DEFAULT_USER_ID'),
+          author: process.env.DEFAULT_USER_ID,
         }
       });
     }

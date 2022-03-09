@@ -6,12 +6,12 @@ module.exports = (config, { strapi }) => {
       filters: { author: { id: { $eq: ctx.params.id} } },
       fields: ['id'],
     });
-    const result = await next(ctx);
+    await next();
     try {
       for(let comp of comps) {
         await strapi.entityService.update('api::comp.comp', comp.id, {
           data: {
-            author: env('DEFAULT_USER_ID'),
+            author: process.env.DEFAULT_USER_ID,
           }
         });
       }
@@ -19,6 +19,5 @@ module.exports = (config, { strapi }) => {
       logger.error(`An error occurred on REST user delete while modifying comps: ${JSON.stringify(err)}`);
       return ctx.throw(500, `An error occurred on REST user delete while modifying comps`);
     }
-    return result;
   };
 };
