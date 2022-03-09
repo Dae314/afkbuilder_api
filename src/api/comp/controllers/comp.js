@@ -107,7 +107,6 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         }
       },
       });
-      delete author.id;
       author.upvotes = upvotes;
       // first pass filter for top level properties
       const firstFilterSavedComps = author.saved_comps.map(selectProps('id', 'uuid', 'name', 'heroes', 'upvotes', 'downvotes', 'author', 'comp_update', 'createdAt'));
