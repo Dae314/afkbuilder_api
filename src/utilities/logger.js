@@ -26,4 +26,11 @@ const logger = winston.createLogger({
   ]
 });
 
-module.exports = logger;
+const userLogger = winston.createLogger({
+  format: logFormat,
+  transports: [
+    new winston.transports.File({ filename: './logs/user.log' }),
+  ],
+})
+
+module.exports = {logger, userLogger};

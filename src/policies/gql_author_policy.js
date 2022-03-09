@@ -1,4 +1,4 @@
-const logger = require('../utilities/logger');
+const {logger} = require('../utilities/logger');
 const { PolicyError } = require('@strapi/utils').errors;
 
 module.exports = async (ctx, config, { strapi }) => {

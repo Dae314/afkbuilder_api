@@ -1,4 +1,4 @@
-const logger = require('../utilities/logger');
+const {logger} = require('../utilities/logger');
 const { sanitize } = require("@strapi/utils");
 const { ApplicationError } = require('@strapi/utils').errors;
 

@@ -1,4 +1,4 @@
-const logger = require('../src/utilities/logger');
+const {logger} = require('../src/utilities/logger');
 const {calcScore, decayBegin, decayEnd} = require('../src/utilities/calcScore');
 
 module.exports = {

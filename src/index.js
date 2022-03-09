@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require('./utilities/logger');
+const {logger} = require('./utilities/logger');
 const {calcScore} = require('./utilities/calcScore');
 // const GraphQLJSON = require('graphql-type-json');
 
@@ -148,7 +148,7 @@ module.exports = {
 };
 
 /***********************************************
-                     ⢀⣠⣴⣶⣾⣿⣿⣿⣿⣶⣄
+                       ⢀⣠⣴⣶⣾⣿⣿⣿⣿⣶⣄
                     ⢀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧
                   ⡔⠉⠙⠻⡟⠛⠛⠛⠛⠿⣿⠻⣿⣿⣿⣿
                 ⠈⡄⢢              ⣨⣿⣿⠃

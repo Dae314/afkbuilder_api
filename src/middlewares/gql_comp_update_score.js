@@ -1,5 +1,5 @@
 const {calcScore} = require('../utilities/calcScore');
-const logger = require('../utilities/logger');
+const {logger} = require('../utilities/logger');
 const { ApplicationError } = require('@strapi/utils').errors;
 
 module.exports = async (next, parent, args, context, info) => {

@@ -5,7 +5,7 @@
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
-const logger = require('../../../utilities/logger');
+const {logger} = require('../../../utilities/logger');
 const {selectProps} = require('../../../utilities/selectProps');
 
 module.exports = createCoreController('api::tag.tag', ({ strapi }) => ({

@@ -1,4 +1,4 @@
-const logger = require('../utilities/logger');
+const {logger} = require('../utilities/logger');
 
 module.exports = (config, { strapi }) => {
   return async (ctx, next) => {

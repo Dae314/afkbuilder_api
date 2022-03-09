@@ -6,7 +6,7 @@
 
 const { createCoreController } = require('@strapi/strapi').factories;
 const { sanitize } = require("@strapi/utils");
-const logger = require('../../../utilities/logger');
+const {logger} = require('../../../utilities/logger');
 const {calcScore} = require('../../../utilities/calcScore');
 const {selectProps} = require('../../../utilities/selectProps');
 
