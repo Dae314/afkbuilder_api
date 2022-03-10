@@ -4,19 +4,32 @@
   "info": {
     "singularName": "report",
     "pluralName": "reports",
-    "displayName": "reports"
+    "displayName": "reports",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "title": {
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "type": {
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "text",
+    "target_type": {
+      "type": "string",
+      "required": true
+    },
+    "target_id": {
+      "type": "string",
+      "required": true
+    },
+    "target_name": {
+      "type": "string",
       "required": true
     }
   }
