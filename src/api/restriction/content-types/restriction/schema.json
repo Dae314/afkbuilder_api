@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "restrictions",
+  "info": {
+    "singularName": "restriction",
+    "pluralName": "restrictions",
+    "displayName": "restrictions"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "expiration": {
+      "type": "datetime",
+      "required": true
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "target_id": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
