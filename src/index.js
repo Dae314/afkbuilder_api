@@ -121,7 +121,7 @@ module.exports = {
           middlewares: ['global::gql_user_del_cleanup'],
         },
         'Mutation.updateUsersPermissionsUser': {
-          policies: ['global::gql_profile_owner_policy', 'global::gql_username_policy'],
+          policies: ['global::gql_profile_owner_policy', 'global::gql_username_restriction', 'global::gql_username_policy'],
         },
         'Mutation.createComp': {
           policies: ['global::gql_score_policy'],

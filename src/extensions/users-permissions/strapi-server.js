@@ -43,7 +43,7 @@ module.exports = (plugin) => {
     }
   };
 
-  // modify the user update route with owner check and username check
+  // modify the user update route with owner, username, and restriction check
   const userUpdateIdx = plugin.routes['content-api'].routes.findIndex(e => e.method === 'PUT' && e.handler === 'user.update');
   plugin.routes['content-api'].routes[userUpdateIdx] = {
     method: 'PUT',
@@ -51,7 +51,7 @@ module.exports = (plugin) => {
     handler: 'user.update',
     config: {
       prefix: '',
-      policies: ['global::rest_profile_owner_policy','global::rest_username_policy'],
+      policies: ['global::rest_profile_owner_policy','global::rest_username_restriction','global::rest_username_policy'],
     }
   };
 
