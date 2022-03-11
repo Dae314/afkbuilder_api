@@ -24,6 +24,7 @@ module.exports = {
       method: 'PUT',
       path: '/custom-comps/toggledownvote/:id',
       config: {
+        policies: ['global::rest_vote_restriction'],
         middlewares: [ 'global::rest_transform_comp_uuid' ],
       },
       handler: 'comp.toggleDownvote',

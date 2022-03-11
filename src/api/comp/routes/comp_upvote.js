@@ -24,6 +24,7 @@ module.exports = {
       method: 'PUT',
       path: '/custom-comps/toggleupvote/:id',
       config: {
+        policies: ['global::rest_vote_restriction'],
         middlewares: [ 'global::rest_transform_comp_uuid' ],
       },
       handler: 'comp.toggleUpvote',

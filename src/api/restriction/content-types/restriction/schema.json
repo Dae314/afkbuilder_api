@@ -4,17 +4,14 @@
   "info": {
     "singularName": "restriction",
     "pluralName": "restrictions",
-    "displayName": "restrictions"
+    "displayName": "restrictions",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
-    "type": {
-      "type": "string",
-      "required": true
-    },
     "expiration": {
       "type": "datetime",
       "required": true
@@ -27,6 +24,14 @@
     "target_id": {
       "type": "string",
       "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "username",
+        "comp",
+        "vote"
+      ]
     }
   }
 }
