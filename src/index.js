@@ -124,15 +124,15 @@ module.exports = {
           policies: ['global::gql_profile_owner_policy', 'global::gql_username_restriction', 'global::gql_username_policy'],
         },
         'Mutation.createComp': {
-          policies: ['global::gql_score_policy'],
+          policies: ['global::gql_comp_restriction', 'global::gql_score_policy'],
           middlewares: ['global::gql_comp_tags', 'global::gql_comp_heroes']
         },
         'Mutation.updateComp': {
-          policies: ['global::gql_author_policy', 'global::gql_score_policy'],
+          policies: ['global::gql_author_policy', 'global::gql_comp_restriction', 'global::gql_score_policy'],
           middlewares: ['global::gql_comp_tags', 'global::gql_comp_heroes'],
         },
         'Mutation.deleteComp': {
-          policies: ['global::gql_author_policy'],
+          policies: ['global::gql_author_policy', 'global::gql_comp_restriction'],
         },
       },
     }));
