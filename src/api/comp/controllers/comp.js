@@ -432,7 +432,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
         populate: 'saved_comps',
       });
       const result = user.saved_comps.map(selectProps('id', 'uuid'));
-      return { data: {comps: result} };
+      return { data: {comps: result, saves: new_saved_users.length} };
     } catch(err) {
       logger.error(`An error occurred updating comp for toggleSave: ${JSON.stringify(err)}`);
       return ctx.throw(500, `An error occurred updating comp for toggleSave.`);
