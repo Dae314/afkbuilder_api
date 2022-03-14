@@ -385,7 +385,7 @@ module.exports = createCoreController('api::comp.comp', ({ strapi }) => ({
       const user = await strapi.entityService.findOne('plugin::users-permissions.user', ctx.state.user.id, {
         populate: 'saved_comps',
       });
-      const result = user.saved_comps.map(selectProps('id', 'uuid'));
+      const result = user.saved_comps.map(selectProps('id', 'uuid', 'comp_update'));
       return { data: { comps: result} };
     } catch (err) {
       logger.error(`An error occurred looking up user for getAllSaved: ${JSON.stringify(err)}`);
