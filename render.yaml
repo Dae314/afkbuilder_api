@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: afkbuilder_api
+    name: afkbuilder_strapi
     env: node
     plan: free
     repo: https://github.com/Dae314/afkbuilder_api.git
@@ -40,6 +40,6 @@ services:
         sync: false
 
 databases:
-  - name: afkbuilder_strapi
+  - name: afkbuilder_pg
     plan: free
     region: ohio
