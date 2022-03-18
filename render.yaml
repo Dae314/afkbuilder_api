@@ -22,6 +22,10 @@ services:
         fromDatabase:
           name: afkbuilder_strapi
           property: connectionString
+      - KEY: DATABASE_PORT
+        fromDatabase:
+          name: afkbuilder_strapi
+          property: port
       - key: CRON_ENABLED
         value: true
       - key: DEFAULT_USER_ID
