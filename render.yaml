@@ -22,7 +22,7 @@ services:
         fromDatabase:
           name: afkbuilder_strapi
           property: connectionString
-      - KEY: DATABASE_PORT
+      - key: DATABASE_PORT
         fromDatabase:
           name: afkbuilder_strapi
           property: port
