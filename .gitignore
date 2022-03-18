@@ -107,6 +107,7 @@ coverage
 
 logs/*.json
 .env
+.env.prod
 license.txt
 exports
 *.cache
