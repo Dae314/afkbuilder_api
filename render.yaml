@@ -1,15 +1,14 @@
 services:
   - type: web
-    name: strapi
+    name: afkbuilder_api
     env: node
-    plan: starter
+    plan: free
+    repo: https://github.com/Dae314/afkbuilder_api.git
+    region: ohio
+    branch: master
     buildCommand: yarn install && yarn build
     startCommand: yarn start
     healthCheckPath: /_health
-    disk:
-      name: strapi-uploads
-      mountPath: /opt/render/project/src/public/uploads
-      sizeGB: 1
     envVars:
       - key: NODE_VERSION
         value: 16.13.1
@@ -23,15 +22,19 @@ services:
         fromDatabase:
           name: afkbuilder_strapi
           property: connectionString
+      - key: CRON_ENABLED
+        value: true
+      - key: DEFAULT_USER_ID
+        value: 1
       - key: JWT_SECRET
-        generateValue: true
+        sync: false
       - key: ADMIN_JWT_SECRET
-        generateValue: true
+        sync: false
       - key: API_TOKEN_SALT
-        generateValue: true
-      - key: URL
-        value: http://api.afkbuilder.com:16011
+        sync: false
+      - key: APP_KEYS
+        sync: false
 
 databases:
   - name: afkbuilder_strapi
-    plan: starter
+    plan: free
