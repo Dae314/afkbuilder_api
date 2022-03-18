@@ -10,11 +10,6 @@ module.exports = ({ env }) => {
   let { host, port, database, user, password } = parse(env("DATABASE_URL"));
 
   if(!port) port = env.int('DATABASE_PORT', 5432);
-  console.log(env("DATABASE_URL"));
-  console.log(`host: ${host}`);
-  console.log(`port: ${port}`);
-  console.log(`database: ${database}`);
-  console.log(`user: ${user}`);
 
   return {
     connection: {
