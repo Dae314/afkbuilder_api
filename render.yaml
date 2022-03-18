@@ -20,11 +20,11 @@ services:
         value: 10000
       - key: DATABASE_URL
         fromDatabase:
-          name: afkbuilder_strapi
+          name: afkbuilder_pg
           property: connectionString
       - key: DATABASE_PORT
         fromDatabase:
-          name: afkbuilder_strapi
+          name: afkbuilder_pg
           property: port
       - key: CRON_ENABLED
         value: true
