@@ -1,7 +1,17 @@
 const { parse } = require("pg-connection-string");
+var dns = require('dns');
+
+const dnscheck = dns.lookup('dpg-c8pv9nfh8vl7rvmq45gg', function (err, addresses, family) {
+  console.log(addresses);
+});
 
 module.exports = ({ env }) => {
   const { host, port, database, user, password } = parse(env("DATABASE_URL"));
+
+  console.log(`host: ${host}`);
+  console.log(`port: ${port}`);
+  console.log(`database: ${database}`);
+  console.log(`user: ${user}`);
 
   return {
     connection: {
