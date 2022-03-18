@@ -42,3 +42,4 @@ services:
 databases:
   - name: afkbuilder_strapi
     plan: free
+    region: ohio
