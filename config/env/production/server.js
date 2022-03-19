@@ -3,7 +3,7 @@ const cronTasks = require("../../cron-tasks");
 module.exports = ({ env }) => ({
   host: env('HOST', 'localhost'),
   port: env.int('PORT', 1337),
-  url: env('api.afkbuilder.com'),
+  url: env('https://api.afkbuilder.com'),
   proxy: true,
   app: {
     keys: env.array('APP_KEYS', ['koa.sess', 'koa.sess2']),
