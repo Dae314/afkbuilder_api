@@ -6,7 +6,7 @@ module.exports = ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS', ['koa.sess', 'koa.sess2']),
   },
-  url: env('URL', 'http://localhost:1337'),
+  url: env('STRAPI_URL', 'http://localhost:1337'),
   cron: {
     enabled: env.bool('CRON_ENABLED', false),
     tasks: cronTasks,

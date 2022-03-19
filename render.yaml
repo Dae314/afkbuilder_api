@@ -18,6 +18,8 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: STRAPI_URL
+        value: https://api.afkbuilder.com
       - key: DATABASE_URL
         fromDatabase:
           name: afkbuilder_pg
@@ -29,7 +31,7 @@ services:
       - key: CRON_ENABLED
         value: true
       - key: DEFAULT_USER_ID
-        value: 1
+        value: 2
       - key: JWT_SECRET
         sync: false
       - key: ADMIN_JWT_SECRET
