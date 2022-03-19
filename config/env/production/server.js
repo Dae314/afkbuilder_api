@@ -1,7 +1,7 @@
 const cronTasks = require("../../cron-tasks");
 
 module.exports = ({ env }) => ({
-  host: env('HOST', '0.0.0.0'),
+  host: env('HOST', 'localhost'),
   port: env.int('PORT', 1337),
   url: env("RENDER_EXTERNAL_URL"),
   proxy: true,
