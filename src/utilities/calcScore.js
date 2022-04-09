@@ -32,7 +32,7 @@ function calcDecayFactor(updatedAt) {
 const alphaBase = 3.0; // equivalent to 3 upvotes
 const betaBase = 3.0; // equivalent to 3 downvotes
 const quantileLimit = 0.05; // 95% of probable results are above the result number
-const saveWeight = 1; // upvote weight of a save (save = 1 upvote)
+const saveWeight = 0; // upvote weight of a save (save = 0 upvotes)
 
 // helper function that uses the beta quantile function and decay to calculate a comp's score for sorting
 function calcScore({upvotes, downvotes, saves, updatedAt}) {
