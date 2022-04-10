@@ -2,7 +2,7 @@ services:
   - type: web
     name: afkbuilder_strapi
     env: node
-    plan: free
+    plan: starter plus
     repo: https://github.com/Dae314/afkbuilder_api.git
     region: ohio
     branch: master
@@ -43,5 +43,5 @@ services:
 
 databases:
   - name: afkbuilder_pg
-    plan: free
+    plan: starter
     region: ohio
