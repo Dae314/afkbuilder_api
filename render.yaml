@@ -17,7 +17,7 @@ services:
       - key: BUILD_TYPE
         value: production
       - key: PORT
-        value: 10000
+        value: 26156
       - key: STRAPI_URL
         value: https://api.afkbuilder.com
       - key: DATABASE_URL
