@@ -134,6 +134,12 @@ module.exports = {
         'Mutation.deleteComp': {
           policies: ['global::gql_author_policy', 'global::gql_comp_restriction'],
         },
+        // 'Query.comps': {
+        //   middlewares: ['global::gql_comp_add_author'],
+        // },
+        // 'Query.comp': {
+        //   middlewares: ['global::gql_comp_add_author'],
+        // },
       },
     }));
   },
