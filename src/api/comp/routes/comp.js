@@ -18,6 +18,12 @@ module.exports = createCoreRouter('api::comp.comp', {
     },
     delete: {
       policies: ['global::rest_author_policy','global::rest_comp_restriction'],
+    },
+    find: {
+      middlewares: ['global::rest_comp_add_author'],
+    },
+    findOne: {
+      middlewares: ['global::rest_comp_add_author'],
     }
   }
 });
