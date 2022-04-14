@@ -3,7 +3,7 @@ module.exports = [
   'strapi::security',
   { name: 'strapi::cors',
     config: {
-      origin: ['https://api.afkbuilder.com', 'https://afkbuilder.com', 'https://afkbuilder-strapi.onrender.com', 'http://localhost:5000'],
+      origin: ['https://api.afkbuilder.com', 'https://afkbuilder.com', 'https://afkbuilder-strapi.onrender.com'],
     }
   },
   'strapi::poweredBy',
