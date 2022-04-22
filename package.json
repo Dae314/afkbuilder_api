@@ -1,7 +1,7 @@
 {
   "name": "afk-builder-api",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Database API for AFKBuilder using Strapi",
   "scripts": {
     "dev": "strapi develop",
