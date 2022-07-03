@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = ({ env }) => ({
   graphql: {
     config: {
       endpoint: '/graphql',
@@ -16,6 +16,7 @@ module.exports = {
       jwt: {
         expiresIn: '14d',
       },
+      jwtSecret: env('JWT_SECRET', 'KbJf0h0$iBQmZrsQ!TTZ#jJuaaWT*Trb'),
     },
   },
-};
+});
