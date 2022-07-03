@@ -12,13 +12,13 @@
   "devDependencies": {},
   "dependencies": {
     "@stdlib/dist-stats-base-dists-flat": "^0.0.96",
-    "@strapi/plugin-graphql": "4.1.8",
-    "@strapi/plugin-i18n": "4.1.8",
-    "@strapi/plugin-users-permissions": "4.1.8",
-    "@strapi/strapi": "4.1.8",
+    "@strapi/plugin-graphql": "4.1.10",
+    "@strapi/plugin-i18n": "4.1.10",
+    "@strapi/plugin-users-permissions": "4.1.10",
+    "@strapi/strapi": "4.1.10",
     "graphql-type-json": "^0.3.2",
     "pg": "^8.7.1",
-    "sqlite3": "5.0.2",
+    "sqlite3": "5.0.8",
     "winston": "^3.4.0",
     "winston-daily-rotate-file": "^4.5.5"
   },
